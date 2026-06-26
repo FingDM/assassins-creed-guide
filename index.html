@@ -7,40 +7,251 @@
   <title>Assassin's Creed Universe Guide</title>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
-      min-height: 100vh;
-      background: #0b0f14;
+      background: #070b10;
       color: #ffffff;
       font-family: Arial, sans-serif;
+      overflow-x: hidden;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
       display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
       align-items: center;
-      justify-content: center;
-      text-align: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: rgba(7, 11, 16, 0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
     }
 
-    main {
-      max-width: 720px;
-      padding: 32px;
+    .title {
+      font-size: 16px;
+      font-weight: 700;
+      white-space: nowrap;
     }
 
-    h1 {
-      margin-bottom: 16px;
-      font-size: 42px;
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
     }
 
-    p {
-      color: #b8c0cc;
-      font-size: 18px;
-      line-height: 1.5;
+    .control-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    button,
+    label {
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      border-radius: 8px;
+      padding: 7px 10px;
+      font-size: 13px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    button.active {
+      background: #ffffff;
+      color: #070b10;
+    }
+
+    input {
+      margin-right: 5px;
+    }
+
+    .viewport {
+      width: 100%;
+      overflow: auto;
+      padding: 24px;
+    }
+
+    .guide-wrap {
+      width: min(100%, 1400px);
+      margin: 0 auto;
+    }
+
+    .guide {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 5240 / 11294;
+      background: #070b10;
+    }
+
+    .guide img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .layer-background { z-index: 0; }
+    .layer-phases { z-index: 1; }
+    .layer-backframes { z-index: 2; }
+    .layer-nonref-books { z-index: 3; }
+    .layer-spin-offs { z-index: 4; }
+    .layer-books { z-index: 5; }
+    .layer-video { z-index: 6; }
+    .layer-upcoming { z-index: 7; }
+    .layer-comics { z-index: 8; }
+    .layer-main-games { z-index: 9; }
+    .layer-labels { z-index: 11; }
+    .layer-borders { z-index: 12; }
+
+    @media (max-width: 700px) {
+      .topbar {
+        align-items: flex-start;
+      }
+
+      .title {
+        width: 100%;
+      }
+
+      .viewport {
+        padding: 12px;
+      }
+
+      button,
+      label {
+        font-size: 12px;
+        padding: 6px 8px;
+      }
     }
   </style>
 </head>
 
 <body>
-  <main>
-    <h1>Assassin's Creed Universe Guide</h1>
-    <p>Interactive guide prototype is loading.</p>
+  <header class="topbar">
+    <div class="title">Assassin's Creed Universe Guide</div>
+
+    <div class="controls">
+      <div class="control-group">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="ru">RU</button>
+      </div>
+
+      <div class="control-group">
+        <label>
+          <input type="checkbox" data-layer="main-games" checked>
+          Main
+        </label>
+
+        <label>
+          <input type="checkbox" data-layer="spin-offs" checked>
+          Spin-offs
+        </label>
+
+        <label>
+          <input type="checkbox" data-layer="books" checked>
+          Books
+        </label>
+
+        <label>
+          <input type="checkbox" data-layer="nonref-books" checked>
+          Non-fiction
+        </label>
+
+        <label>
+          <input type="checkbox" data-layer="comics" checked>
+          Comics
+        </label>
+
+        <label>
+          <input type="checkbox" data-layer="video" checked>
+          Video
+        </label>
+
+        <label>
+          <input type="checkbox" data-layer="upcoming" checked>
+          Upcoming
+        </label>
+      </div>
+    </div>
+  </header>
+
+  <main class="viewport">
+    <div class="guide-wrap">
+      <div class="guide">
+        <img class="layer-background" src="assets/layers/00-background.png" alt="Background">
+
+        <img class="layer-phases lang-layer lang-en" src="assets/layers/01-phases-localization.png" alt="Phases EN">
+        <img class="layer-phases lang-layer lang-ru hidden" src="assets/layers/01-phases-localization-ru.png" alt="Phases RU">
+
+        <img class="layer-backframes" src="assets/layers/02-backframes.png" alt="Backframes">
+
+        <img class="layer-nonref-books filter-layer" data-layer-name="nonref-books" src="assets/layers/03-nonref-books.png" alt="Non-fiction books">
+        <img class="layer-spin-offs filter-layer" data-layer-name="spin-offs" src="assets/layers/04-spin-offs.png" alt="Spin-offs">
+        <img class="layer-books filter-layer" data-layer-name="books" src="assets/layers/05-books.png" alt="Books">
+        <img class="layer-video filter-layer" data-layer-name="video" src="assets/layers/06-video.png" alt="Video">
+        <img class="layer-upcoming filter-layer" data-layer-name="upcoming" src="assets/layers/07-upcoming.png" alt="Upcoming">
+        <img class="layer-comics filter-layer" data-layer-name="comics" src="assets/layers/08-comics.png" alt="Comics">
+        <img class="layer-main-games filter-layer" data-layer-name="main-games" src="assets/layers/09-main-games.png" alt="Main games">
+
+        <img class="layer-labels lang-layer lang-en" src="assets/layers/11-labels-localization.png" alt="Labels EN">
+        <img class="layer-labels lang-layer lang-ru hidden" src="assets/layers/11-labels-localization-ru.png" alt="Labels RU">
+
+        <img class="layer-borders" src="assets/layers/12-borders.png" alt="Borders">
+      </div>
+    </div>
   </main>
+
+  <script>
+    const langButtons = document.querySelectorAll('.lang-btn');
+    const langLayers = document.querySelectorAll('.lang-layer');
+
+    langButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const lang = button.dataset.lang;
+
+        langButtons.forEach((btn) => {
+          btn.classList.toggle('active', btn === button);
+        });
+
+        langLayers.forEach((layer) => {
+          const isCurrentLang = layer.classList.contains(`lang-${lang}`);
+          layer.classList.toggle('hidden', !isCurrentLang);
+        });
+
+        document.documentElement.lang = lang;
+      });
+    });
+
+    const checkboxes = document.querySelectorAll('input[type="checkbox"][data-layer]');
+    const filterLayers = document.querySelectorAll('.filter-layer');
+
+    checkboxes.forEach((checkbox) => {
+      checkbox.addEventListener('change', () => {
+        const layerName = checkbox.dataset.layer;
+
+        filterLayers.forEach((layer) => {
+          if (layer.dataset.layerName === layerName) {
+            layer.classList.toggle('hidden', !checkbox.checked);
+          }
+        });
+      });
+    });
+  </script>
 </body>
 </html>
