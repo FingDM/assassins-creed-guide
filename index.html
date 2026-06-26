@@ -9,17 +9,14 @@
   <style>
     :root {
       --bg: #070b10;
-      --panel: rgba(7, 11, 16, 0.92);
-      --panel-solid: #0b1119;
+      --panel: rgba(7, 11, 16, 0.94);
       --line: rgba(255, 255, 255, 0.14);
-      --line-strong: rgba(255, 255, 255, 0.24);
+      --line-strong: rgba(255, 255, 255, 0.25);
       --text: #ffffff;
       --muted: #aeb8c7;
       --active: #ffffff;
       --active-text: #071018;
-      --danger: #ff5b5b;
       --radius: 10px;
-      --topbar-height: 72px;
     }
 
     * {
@@ -95,7 +92,7 @@
       display: flex;
       flex-direction: column;
       gap: 3px;
-      min-width: 210px;
+      min-width: 220px;
     }
 
     .title {
@@ -117,7 +114,6 @@
       flex: 1;
       justify-content: flex-end;
       align-items: center;
-      gap: 8px;
       min-width: 0;
     }
 
@@ -135,7 +131,6 @@
       display: flex;
       gap: 6px;
       align-items: center;
-      padding: 0 2px;
       flex: 0 0 auto;
     }
 
@@ -206,13 +201,14 @@
       position: relative;
       flex: 1 1 auto;
       min-height: 0;
-      overflow: hidden;
+      overflow: auto;
       background:
         radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.045), transparent 34%),
         #05080d;
       touch-action: none;
       user-select: none;
       cursor: grab;
+      padding: 24px;
     }
 
     .viewer.mode-zoom {
@@ -227,18 +223,16 @@
       cursor: ns-resize;
     }
 
-    .guide {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 5240px;
-      height: 11294px;
-      transform-origin: 0 0;
-      will-change: transform;
+    .guide-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 5240 / 11294;
+      margin: 0 auto;
       background: #070b10;
+      flex: 0 0 auto;
     }
 
-    .guide img {
+    .guide-wrap img {
       position: absolute;
       inset: 0;
       width: 100%;
@@ -266,13 +260,14 @@
     .layer-borders { z-index: 12; }
 
     .corner-panel {
-      position: absolute;
+      position: fixed;
       left: 16px;
       bottom: 16px;
       z-index: 60;
       display: flex;
       gap: 8px;
       align-items: center;
+      max-width: calc(100vw - 32px);
       padding: 8px 10px;
       border: 1px solid var(--line);
       background: rgba(7, 11, 16, 0.78);
@@ -284,13 +279,13 @@
     }
 
     .toast {
-      position: absolute;
+      position: fixed;
       right: 16px;
       bottom: 16px;
       z-index: 70;
       padding: 10px 12px;
       border: 1px solid var(--line);
-      background: rgba(7, 11, 16, 0.88);
+      background: rgba(7, 11, 16, 0.9);
       backdrop-filter: blur(10px);
       border-radius: var(--radius);
       color: var(--text);
@@ -307,15 +302,11 @@
     }
 
     @media (max-width: 900px) {
-      body {
-        overflow: hidden;
-      }
-
       .topbar {
         align-items: flex-start;
         flex-direction: column;
         gap: 10px;
-        padding: 10px 10px;
+        padding: 10px;
       }
 
       .brand {
@@ -349,6 +340,10 @@
         height: 30px;
       }
 
+      .viewer {
+        padding: 14px;
+      }
+
       .corner-panel {
         left: 10px;
         right: 10px;
@@ -365,12 +360,16 @@
       }
     }
 
-    @media (max-width: 520px) {
+    @media (max-width: 560px) {
       .toolbar-section.view-extra {
         display: none;
       }
 
       .fixed-pill {
+        display: none;
+      }
+
+      .corner-panel {
         display: none;
       }
     }
@@ -458,7 +457,7 @@
   </header>
 
   <main id="viewer" class="viewer mode-pan">
-    <div id="guide" class="guide" aria-label="Assassin's Creed Universe Guide">
+    <div id="guide-wrap" class="guide-wrap" aria-label="Assassin's Creed Universe Guide">
       <img class="layer-background" src="assets/layers/00-background.png" alt="Background">
 
       <img class="layer-phases lang-layer lang-en" src="assets/layers/01-phases-localization.png" alt="Phases EN">
@@ -480,7 +479,7 @@
     </div>
 
     <div class="corner-panel" id="hint" data-i18n="hint">
-      Drag to move · Wheel / pinch to zoom · Switch to Zoom Drag for drag-based zoom
+      Drag to move · Wheel / pinch to zoom · Zoom Drag for drag-based zoom
     </div>
 
     <div class="toast" id="toast"></div>
@@ -489,7 +488,7 @@
   <script>
     const BASE_WIDTH = 5240;
     const BASE_HEIGHT = 11294;
-    const STORAGE_KEY = 'ac-guide-viewer-v2';
+    const STORAGE_KEY = 'ac-guide-safe-viewer-v1';
 
     const FILTERS = [
       'spin-offs',
@@ -518,7 +517,7 @@
         upcoming: 'Upcoming',
         resetFilters: 'Reset Filters',
         share: 'Share',
-        hint: 'Drag to move · Wheel / pinch to zoom · Switch to Zoom Drag for drag-based zoom',
+        hint: 'Drag to move · Wheel / pinch to zoom · Zoom Drag for drag-based zoom',
         copied: 'Link copied',
         copyFallback: 'Copy this link:'
       },
@@ -546,7 +545,7 @@
     };
 
     const viewer = document.querySelector('#viewer');
-    const guide = document.querySelector('#guide');
+    const guideWrap = document.querySelector('#guide-wrap');
     const toast = document.querySelector('#toast');
 
     const langButtons = document.querySelectorAll('.lang-btn');
@@ -565,7 +564,7 @@
     const modePanButton = document.querySelector('#mode-pan');
     const modeZoomButton = document.querySelector('#mode-zoom');
 
-    let fitScale = 1;
+    let baseGuideWidth = 1000;
     let saveTimer = null;
     let toastTimer = null;
 
@@ -573,8 +572,6 @@
       lang: 'en',
       mode: 'pan',
       zoom: 1,
-      panX: 0,
-      panY: 0,
       filters: {
         'spin-offs': true,
         'books': true,
@@ -592,8 +589,8 @@
       pointerId: null,
       startX: 0,
       startY: 0,
-      startPanX: 0,
-      startPanY: 0,
+      startScrollLeft: 0,
+      startScrollTop: 0,
       startZoom: 1
     };
 
@@ -607,48 +604,22 @@
       return Math.min(max, Math.max(min, value));
     }
 
-    function getScale() {
-      return fitScale * state.zoom;
+    function getGuideWidth() {
+      return baseGuideWidth * state.zoom;
     }
 
-    function computeFitScale() {
-      const rect = viewer.getBoundingClientRect();
-      const padding = window.innerWidth <= 900 ? 16 : 32;
-      fitScale = Math.max(0.01, (rect.width - padding) / BASE_WIDTH);
+    function getGuideHeight() {
+      return getGuideWidth() * (BASE_HEIGHT / BASE_WIDTH);
     }
 
-    function clampPan() {
-      const rect = viewer.getBoundingClientRect();
-      const scale = getScale();
-      const scaledWidth = BASE_WIDTH * scale;
-      const scaledHeight = BASE_HEIGHT * scale;
-      const padding = window.innerWidth <= 900 ? 10 : 16;
-
-      if (scaledWidth <= rect.width) {
-        state.panX = (rect.width - scaledWidth) / 2;
-      } else {
-        const minX = rect.width - scaledWidth - padding;
-        const maxX = padding;
-        state.panX = clamp(state.panX, minX, maxX);
-      }
-
-      if (scaledHeight <= rect.height) {
-        state.panY = (rect.height - scaledHeight) / 2;
-      } else {
-        const minY = rect.height - scaledHeight - padding;
-        const maxY = padding;
-        state.panY = clamp(state.panY, minY, maxY);
-      }
+    function computeBaseGuideWidth() {
+      const padding = window.innerWidth <= 900 ? 28 : 48;
+      baseGuideWidth = Math.max(280, viewer.clientWidth - padding);
     }
 
-    function applyTransform() {
-      clampPan();
-
-      const scale = getScale();
-      guide.style.transform = `translate3d(${state.panX}px, ${state.panY}px, 0) scale(${scale})`;
-
-      const percent = Math.round(state.zoom * 100);
-      zoomDisplayButton.textContent = `${percent}%`;
+    function applyZoom() {
+      guideWrap.style.width = `${getGuideWidth()}px`;
+      zoomDisplayButton.textContent = `${Math.round(state.zoom * 100)}%`;
     }
 
     function saveState() {
@@ -665,74 +636,84 @@
       }, 120);
     }
 
-    function centerTop() {
+    function getPointInGuide(clientX, clientY) {
+      const viewerRect = viewer.getBoundingClientRect();
+      const width = guideWrap.offsetWidth;
+      const height = guideWrap.offsetHeight;
+
+      const viewX = clientX - viewerRect.left;
+      const viewY = clientY - viewerRect.top;
+
+      const x = viewer.scrollLeft + viewX - guideWrap.offsetLeft;
+      const y = viewer.scrollTop + viewY - guideWrap.offsetTop;
+
+      return {
+        xRatio: clamp(x / Math.max(1, width), 0, 1),
+        yRatio: clamp(y / Math.max(1, height), 0, 1),
+        viewX,
+        viewY
+      };
+    }
+
+    function setZoomAt(clientX, clientY, nextZoom) {
+      const point = getPointInGuide(clientX, clientY);
+
+      state.zoom = clamp(nextZoom, 0.35, 6);
+      applyZoom();
+
+      requestAnimationFrame(() => {
+        viewer.scrollLeft = guideWrap.offsetLeft + point.xRatio * guideWrap.offsetWidth - point.viewX;
+        viewer.scrollTop = guideWrap.offsetTop + point.yRatio * guideWrap.offsetHeight - point.viewY;
+        saveState();
+      });
+    }
+
+    function setZoomAtCenter(nextZoom) {
       const rect = viewer.getBoundingClientRect();
-      const scale = getScale();
-      const scaledWidth = BASE_WIDTH * scale;
-      const padding = window.innerWidth <= 900 ? 10 : 16;
-
-      state.panX = (rect.width - scaledWidth) / 2;
-      state.panY = padding;
-
-      applyTransform();
+      setZoomAt(rect.left + rect.width / 2, rect.top + rect.height / 2, nextZoom);
     }
 
     function fitWidth() {
+      computeBaseGuideWidth();
       state.zoom = 1;
-      centerTop();
-      saveState();
+      applyZoom();
+
+      requestAnimationFrame(() => {
+        viewer.scrollLeft = Math.max(0, (viewer.scrollWidth - viewer.clientWidth) / 2);
+        viewer.scrollTop = 0;
+        saveState();
+      });
     }
 
     function fitHeight() {
-      const rect = viewer.getBoundingClientRect();
-      const padding = window.innerWidth <= 900 ? 16 : 32;
-      const targetScale = Math.max(0.01, (rect.height - padding) / BASE_HEIGHT);
+      computeBaseGuideWidth();
 
-      state.zoom = clamp(targetScale / fitScale, 0.25, 8);
+      const availableHeight = Math.max(200, viewer.clientHeight - 32);
+      const heightAtZoomOne = baseGuideWidth * (BASE_HEIGHT / BASE_WIDTH);
 
-      const scale = getScale();
-      state.panX = (rect.width - BASE_WIDTH * scale) / 2;
-      state.panY = (rect.height - BASE_HEIGHT * scale) / 2;
+      state.zoom = clamp(availableHeight / heightAtZoomOne, 0.35, 6);
+      applyZoom();
 
-      applyTransform();
-      saveState();
+      requestAnimationFrame(() => {
+        viewer.scrollLeft = Math.max(0, (viewer.scrollWidth - viewer.clientWidth) / 2);
+        viewer.scrollTop = 0;
+        saveState();
+      });
     }
 
     function resetView() {
       state.zoom = 1;
-      centerTop();
-      saveState();
-    }
+      applyZoom();
 
-    function zoomAt(clientX, clientY, nextZoom) {
-      const rect = viewer.getBoundingClientRect();
-
-      const oldScale = getScale();
-      const pointX = clientX - rect.left;
-      const pointY = clientY - rect.top;
-
-      const worldX = (pointX - state.panX) / oldScale;
-      const worldY = (pointY - state.panY) / oldScale;
-
-      state.zoom = clamp(nextZoom, 0.25, 8);
-
-      const newScale = getScale();
-
-      state.panX = pointX - worldX * newScale;
-      state.panY = pointY - worldY * newScale;
-
-      applyTransform();
-      saveState();
-    }
-
-    function zoomAtCenter(nextZoom) {
-      const rect = viewer.getBoundingClientRect();
-      zoomAt(rect.left + rect.width / 2, rect.top + rect.height / 2, nextZoom);
+      requestAnimationFrame(() => {
+        viewer.scrollLeft = Math.max(0, (viewer.scrollWidth - viewer.clientWidth) / 2);
+        viewer.scrollTop = 0;
+        saveState();
+      });
     }
 
     function setLanguage(lang) {
       state.lang = lang;
-
       document.documentElement.lang = lang;
 
       langButtons.forEach((button) => {
@@ -740,14 +721,14 @@
       });
 
       langLayers.forEach((layer) => {
-        const isCurrentLang = layer.classList.contains(`lang-${lang}`);
-        layer.classList.toggle('hidden', !isCurrentLang);
+        layer.classList.toggle('hidden', !layer.classList.contains(`lang-${lang}`));
       });
 
       const dictionary = UI[lang] || UI.en;
 
       document.querySelectorAll('[data-i18n]').forEach((element) => {
         const key = element.dataset.i18n;
+
         if (dictionary[key]) {
           element.textContent = dictionary[key];
         }
@@ -792,6 +773,7 @@
 
     function showToast(message) {
       window.clearTimeout(toastTimer);
+
       toast.textContent = message;
       toast.classList.add('visible');
 
@@ -852,7 +834,7 @@
         }
 
         if (typeof saved.zoom === 'number') {
-          state.zoom = clamp(saved.zoom, 0.25, 8);
+          state.zoom = clamp(saved.zoom, 0.35, 6);
         }
 
         if (saved.filters) {
@@ -883,7 +865,7 @@
       }
 
       if (Number.isFinite(zoom)) {
-        state.zoom = clamp(zoom, 0.25, 8);
+        state.zoom = clamp(zoom, 0.35, 6);
       }
 
       FILTERS.forEach((key) => {
@@ -924,6 +906,10 @@
       pinch.active = true;
       pinch.startDistance = getPointerDistance(items);
       pinch.startZoom = state.zoom;
+      drag.active = false;
+
+      viewer.classList.remove('is-panning');
+      viewer.classList.remove('is-zoom-dragging');
     }
 
     function stopInteraction(event) {
@@ -969,8 +955,8 @@
       drag.pointerId = event.pointerId;
       drag.startX = event.clientX;
       drag.startY = event.clientY;
-      drag.startPanX = state.panX;
-      drag.startPanY = state.panY;
+      drag.startScrollLeft = viewer.scrollLeft;
+      drag.startScrollTop = viewer.scrollTop;
       drag.startZoom = state.zoom;
 
       viewer.classList.toggle('is-panning', state.mode === 'pan');
@@ -993,7 +979,7 @@
         const center = getPointerCenter(items);
         const ratio = distance / Math.max(1, pinch.startDistance);
 
-        zoomAt(center.x, center.y, pinch.startZoom * ratio);
+        setZoomAt(center.x, center.y, pinch.startZoom * ratio);
         return;
       }
 
@@ -1005,16 +991,13 @@
       const deltaY = event.clientY - drag.startY;
 
       if (state.mode === 'pan') {
-        state.panX = drag.startPanX + deltaX;
-        state.panY = drag.startPanY + deltaY;
-
-        applyTransform();
-        saveState();
+        viewer.scrollLeft = drag.startScrollLeft - deltaX;
+        viewer.scrollTop = drag.startScrollTop - deltaY;
         return;
       }
 
       const zoomDelta = (deltaX - deltaY) * 0.003;
-      zoomAt(event.clientX, event.clientY, drag.startZoom + zoomDelta);
+      setZoomAt(event.clientX, event.clientY, drag.startZoom + zoomDelta);
     });
 
     viewer.addEventListener('pointerup', stopInteraction);
@@ -1025,7 +1008,7 @@
       event.preventDefault();
 
       const zoomFactor = Math.exp(-event.deltaY * 0.001);
-      zoomAt(event.clientX, event.clientY, state.zoom * zoomFactor);
+      setZoomAt(event.clientX, event.clientY, state.zoom * zoomFactor);
     }, { passive: false });
 
     langButtons.forEach((button) => {
@@ -1042,11 +1025,11 @@
     });
 
     zoomOutButton.addEventListener('click', () => {
-      zoomAtCenter(state.zoom - 0.25);
+      setZoomAtCenter(state.zoom - 0.25);
     });
 
     zoomInButton.addEventListener('click', () => {
-      zoomAtCenter(state.zoom + 0.25);
+      setZoomAtCenter(state.zoom + 0.25);
     });
 
     zoomDisplayButton.addEventListener('click', resetView);
@@ -1073,12 +1056,12 @@
 
       if (event.key === '+' || event.key === '=') {
         event.preventDefault();
-        zoomAtCenter(state.zoom + 0.25);
+        setZoomAtCenter(state.zoom + 0.25);
       }
 
       if (event.key === '-') {
         event.preventDefault();
-        zoomAtCenter(state.zoom - 0.25);
+        setZoomAtCenter(state.zoom - 0.25);
       }
 
       if (event.key === '0') {
@@ -1108,26 +1091,25 @@
     });
 
     window.addEventListener('resize', () => {
-      const rect = viewer.getBoundingClientRect();
-      const oldScale = getScale();
+      const oldWidth = guideWrap.offsetWidth;
+      const oldHeight = guideWrap.offsetHeight;
 
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
+      const centerX = viewer.scrollLeft + viewer.clientWidth / 2 - guideWrap.offsetLeft;
+      const centerY = viewer.scrollTop + viewer.clientHeight / 2 - guideWrap.offsetTop;
 
-      const worldX = (centerX - state.panX) / oldScale;
-      const worldY = (centerY - state.panY) / oldScale;
+      const xRatio = clamp(centerX / Math.max(1, oldWidth), 0, 1);
+      const yRatio = clamp(centerY / Math.max(1, oldHeight), 0, 1);
 
-      computeFitScale();
+      computeBaseGuideWidth();
+      applyZoom();
 
-      const newScale = getScale();
-
-      state.panX = centerX - worldX * newScale;
-      state.panY = centerY - worldY * newScale;
-
-      applyTransform();
+      requestAnimationFrame(() => {
+        viewer.scrollLeft = guideWrap.offsetLeft + xRatio * guideWrap.offsetWidth - viewer.clientWidth / 2;
+        viewer.scrollTop = guideWrap.offsetTop + yRatio * guideWrap.offsetHeight - viewer.clientHeight / 2;
+      });
     });
 
-    guide.querySelectorAll('img').forEach((img) => {
+    guideWrap.querySelectorAll('img').forEach((img) => {
       img.addEventListener('error', () => {
         console.warn(`Layer not found: ${img.getAttribute('src')}`);
       });
@@ -1136,12 +1118,16 @@
     readSavedState();
     readUrlState();
 
-    computeFitScale();
+    computeBaseGuideWidth();
+    applyZoom();
     setLanguage(state.lang);
     setMode(state.mode);
     applyFilters();
-    centerTop();
-    applyTransform();
+
+    requestAnimationFrame(() => {
+      viewer.scrollLeft = Math.max(0, (viewer.scrollWidth - viewer.clientWidth) / 2);
+      viewer.scrollTop = 0;
+    });
   </script>
 </body>
 </html>
