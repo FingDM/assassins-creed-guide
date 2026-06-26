@@ -2,94 +2,239 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
   <title>Assassin's Creed Universe Guide</title>
 
   <style>
+    :root {
+      --bg: #070b10;
+      --panel: rgba(7, 11, 16, 0.92);
+      --panel-solid: #0b1119;
+      --line: rgba(255, 255, 255, 0.14);
+      --line-strong: rgba(255, 255, 255, 0.24);
+      --text: #ffffff;
+      --muted: #aeb8c7;
+      --active: #ffffff;
+      --active-text: #071018;
+      --danger: #ff5b5b;
+      --radius: 10px;
+      --topbar-height: 72px;
+    }
+
     * {
       box-sizing: border-box;
     }
 
+    html,
     body {
+      width: 100%;
+      height: 100%;
       margin: 0;
-      background: #070b10;
-      color: #ffffff;
-      font-family: Arial, sans-serif;
-      overflow-x: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      overscroll-behavior: none;
     }
 
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 100;
+    body {
       display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 16px;
-      background: rgba(7, 11, 16, 0.92);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-    }
-
-    .title {
-      font-size: 16px;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .control-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      align-items: center;
+      flex-direction: column;
+      overflow: hidden;
     }
 
     button,
     label {
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      background: rgba(255, 255, 255, 0.08);
-      color: #ffffff;
-      border-radius: 8px;
-      padding: 7px 10px;
+      font: inherit;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.075);
+      color: var(--text);
+      border-radius: var(--radius);
+      padding: 8px 11px;
       font-size: 13px;
+      line-height: 1;
       cursor: pointer;
       user-select: none;
+      white-space: nowrap;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.08s ease;
+    }
+
+    button:hover {
+      border-color: var(--line-strong);
+      background: rgba(255, 255, 255, 0.13);
+    }
+
+    button:active {
+      transform: translateY(1px);
     }
 
     button.active {
+      background: var(--active);
+      color: var(--active-text);
+      border-color: var(--active);
+    }
+
+    .topbar {
+      position: relative;
+      z-index: 100;
+      flex: 0 0 auto;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: var(--panel);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 210px;
+    }
+
+    .title {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.15;
+      white-space: nowrap;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .toolbar {
+      display: flex;
+      flex: 1;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .toolbar-scroll {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      min-width: 0;
+      overflow-x: auto;
+      scrollbar-width: thin;
+      padding-bottom: 2px;
+    }
+
+    .toolbar-section {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      padding: 0 2px;
+      flex: 0 0 auto;
+    }
+
+    .section-divider {
+      width: 1px;
+      height: 28px;
+      background: var(--line);
+      flex: 0 0 auto;
+    }
+
+    .check-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.075);
+      color: var(--text);
+      border-radius: var(--radius);
+      padding: 7px 10px;
+      font-size: 13px;
+      line-height: 1;
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .check-pill:hover {
+      border-color: var(--line-strong);
+      background: rgba(255, 255, 255, 0.13);
+    }
+
+    .check-pill input {
+      margin: 0;
+      accent-color: #ffffff;
+    }
+
+    .fixed-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.12);
+      color: var(--text);
+      border-radius: var(--radius);
+      padding: 7px 10px;
+      font-size: 13px;
+      line-height: 1;
+      user-select: none;
+      white-space: nowrap;
+      opacity: 0.92;
+    }
+
+    .fixed-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
       background: #ffffff;
-      color: #070b10;
+      flex: 0 0 auto;
     }
 
-    input {
-      margin-right: 5px;
+    .zoom-display {
+      min-width: 58px;
+      text-align: center;
+      cursor: default;
     }
 
-    .viewport {
-      width: 100%;
-      overflow: auto;
-      padding: 24px;
+    .viewer {
+      position: relative;
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.045), transparent 34%),
+        #05080d;
+      touch-action: none;
+      user-select: none;
+      cursor: grab;
     }
 
-    .guide-wrap {
-      width: min(100%, 1400px);
-      margin: 0 auto;
+    .viewer.mode-zoom {
+      cursor: zoom-in;
+    }
+
+    .viewer.is-panning {
+      cursor: grabbing;
+    }
+
+    .viewer.is-zoom-dragging {
+      cursor: ns-resize;
     }
 
     .guide {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 5240 / 11294;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 5240px;
+      height: 11294px;
+      transform-origin: 0 0;
+      will-change: transform;
       background: #070b10;
     }
 
@@ -98,58 +243,135 @@
       inset: 0;
       width: 100%;
       height: 100%;
-      object-fit: contain;
+      object-fit: fill;
       pointer-events: none;
       user-select: none;
+      -webkit-user-drag: none;
     }
 
     .hidden {
-      display: none;
+      display: none !important;
     }
 
     .layer-background { z-index: 0; }
-
-    /*
-      01 теперь содержит:
-      - phase localization
-      - phase/backframe visuals
-      Поэтому слой лежит под контентом.
-    */
     .layer-phases { z-index: 1; }
-
     .layer-nonref-books { z-index: 3; }
     .layer-spin-offs { z-index: 4; }
     .layer-books { z-index: 5; }
     .layer-video { z-index: 6; }
     .layer-upcoming { z-index: 7; }
     .layer-comics { z-index: 8; }
-
-    /*
-      Main games всегда включены.
-      Пользователь не может их отключить.
-    */
     .layer-main-games { z-index: 9; }
-
     .layer-labels { z-index: 11; }
     .layer-borders { z-index: 12; }
 
-    @media (max-width: 700px) {
-      .topbar {
-        align-items: flex-start;
+    .corner-panel {
+      position: absolute;
+      left: 16px;
+      bottom: 16px;
+      z-index: 60;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      background: rgba(7, 11, 16, 0.78);
+      backdrop-filter: blur(10px);
+      border-radius: var(--radius);
+      color: var(--muted);
+      font-size: 12px;
+      pointer-events: none;
+    }
+
+    .toast {
+      position: absolute;
+      right: 16px;
+      bottom: 16px;
+      z-index: 70;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      background: rgba(7, 11, 16, 0.88);
+      backdrop-filter: blur(10px);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 13px;
+      opacity: 0;
+      transform: translateY(8px);
+      pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+    }
+
+    .toast.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 900px) {
+      body {
+        overflow: hidden;
       }
 
-      .title {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px 10px;
+      }
+
+      .brand {
+        width: 100%;
+        min-width: 0;
+      }
+
+      .title,
+      .subtitle {
+        white-space: normal;
+      }
+
+      .toolbar {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .toolbar-scroll {
         width: 100%;
       }
 
-      .viewport {
-        padding: 12px;
+      button,
+      .check-pill,
+      .fixed-pill {
+        min-height: 36px;
+        padding: 9px 11px;
+        font-size: 12px;
       }
 
-      button,
-      label {
-        font-size: 12px;
-        padding: 6px 8px;
+      .section-divider {
+        height: 30px;
+      }
+
+      .corner-panel {
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        justify-content: center;
+        font-size: 11px;
+      }
+
+      .toast {
+        left: 10px;
+        right: 10px;
+        bottom: 52px;
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .toolbar-section.view-extra {
+        display: none;
+      }
+
+      .fixed-pill {
+        display: none;
       }
     }
   </style>
@@ -157,108 +379,769 @@
 
 <body>
   <header class="topbar">
-    <div class="title">Assassin's Creed Universe Guide</div>
+    <div class="brand">
+      <div class="title" data-i18n="title">Assassin's Creed Universe Guide</div>
+      <div class="subtitle" data-i18n="subtitle">Interactive layered prototype</div>
+    </div>
 
-    <div class="controls">
-      <div class="control-group">
-        <button class="lang-btn active" data-lang="en">EN</button>
-        <button class="lang-btn" data-lang="ru">RU</button>
-      </div>
+    <div class="toolbar">
+      <div class="toolbar-scroll">
+        <div class="toolbar-section">
+          <button class="lang-btn active" type="button" data-lang="en">EN</button>
+          <button class="lang-btn" type="button" data-lang="ru">RU</button>
+        </div>
 
-      <div class="control-group">
-        <label>
-          <input type="checkbox" data-layer="spin-offs" checked>
-          Spin-offs
-        </label>
+        <div class="section-divider"></div>
 
-        <label>
-          <input type="checkbox" data-layer="books" checked>
-          Books
-        </label>
+        <div class="toolbar-section">
+          <button id="zoom-out" type="button">−</button>
+          <button id="zoom-display" class="zoom-display" type="button">100%</button>
+          <button id="zoom-in" type="button">+</button>
+        </div>
 
-        <label>
-          <input type="checkbox" data-layer="nonref-books" checked>
-          Non-fiction
-        </label>
+        <div class="toolbar-section view-extra">
+          <button id="fit-width" type="button" data-i18n="fitWidth">Fit Width</button>
+          <button id="fit-height" type="button" data-i18n="fitHeight">Fit Height</button>
+          <button id="reset-view" type="button" data-i18n="resetView">Reset View</button>
+        </div>
 
-        <label>
-          <input type="checkbox" data-layer="comics" checked>
-          Comics
-        </label>
+        <div class="toolbar-section">
+          <button id="mode-pan" class="active" type="button" data-mode="pan" data-i18n="panMode">Move</button>
+          <button id="mode-zoom" type="button" data-mode="zoom" data-i18n="zoomMode">Zoom Drag</button>
+        </div>
 
-        <label>
-          <input type="checkbox" data-layer="video" checked>
-          Video
-        </label>
+        <div class="section-divider"></div>
 
-        <label>
-          <input type="checkbox" data-layer="upcoming" checked>
-          Upcoming
-        </label>
+        <div class="toolbar-section">
+          <span class="fixed-pill">
+            <span class="fixed-dot"></span>
+            <span data-i18n="mainFixed">Main Series</span>
+          </span>
+
+          <label class="check-pill">
+            <input type="checkbox" data-layer="spin-offs" checked>
+            <span data-i18n="spinOffs">Spin-offs</span>
+          </label>
+
+          <label class="check-pill">
+            <input type="checkbox" data-layer="books" checked>
+            <span data-i18n="books">Books</span>
+          </label>
+
+          <label class="check-pill">
+            <input type="checkbox" data-layer="nonref-books" checked>
+            <span data-i18n="nonfiction">Non-fiction</span>
+          </label>
+
+          <label class="check-pill">
+            <input type="checkbox" data-layer="comics" checked>
+            <span data-i18n="comics">Comics</span>
+          </label>
+
+          <label class="check-pill">
+            <input type="checkbox" data-layer="video" checked>
+            <span data-i18n="video">Video</span>
+          </label>
+
+          <label class="check-pill">
+            <input type="checkbox" data-layer="upcoming" checked>
+            <span data-i18n="upcoming">Upcoming</span>
+          </label>
+        </div>
+
+        <div class="toolbar-section view-extra">
+          <button id="reset-filters" type="button" data-i18n="resetFilters">Reset Filters</button>
+          <button id="share-view" type="button" data-i18n="share">Share</button>
+        </div>
       </div>
     </div>
   </header>
 
-  <main class="viewport">
-    <div class="guide-wrap">
-      <div class="guide">
-        <img class="layer-background" src="assets/layers/00-background.png" alt="Background">
+  <main id="viewer" class="viewer mode-pan">
+    <div id="guide" class="guide" aria-label="Assassin's Creed Universe Guide">
+      <img class="layer-background" src="assets/layers/00-background.png" alt="Background">
 
-        <img class="layer-phases lang-layer lang-en" src="assets/layers/01-phases-localization.png" alt="Phases EN">
-        <img class="layer-phases lang-layer lang-ru hidden" src="assets/layers/01-phases-localization-ru.png" alt="Phases RU">
+      <img class="layer-phases lang-layer lang-en" src="assets/layers/01-phases-localization.png" alt="Phases EN">
+      <img class="layer-phases lang-layer lang-ru hidden" src="assets/layers/01-phases-localization-ru.png" alt="Phases RU">
 
-        <img class="layer-nonref-books filter-layer" data-layer-name="nonref-books" src="assets/layers/03-nonref-books.png" alt="Non-fiction books">
-        <img class="layer-spin-offs filter-layer" data-layer-name="spin-offs" src="assets/layers/04-spin-offs.png" alt="Spin-offs">
-        <img class="layer-books filter-layer" data-layer-name="books" src="assets/layers/05-books.png" alt="Books">
-        <img class="layer-video filter-layer" data-layer-name="video" src="assets/layers/06-video.png" alt="Video">
-        <img class="layer-upcoming filter-layer" data-layer-name="upcoming" src="assets/layers/07-upcoming.png" alt="Upcoming">
-        <img class="layer-comics filter-layer" data-layer-name="comics" src="assets/layers/08-comics.png" alt="Comics">
+      <img class="layer-nonref-books filter-layer" data-layer-name="nonref-books" src="assets/layers/03-nonref-books.png" alt="Non-fiction books">
+      <img class="layer-spin-offs filter-layer" data-layer-name="spin-offs" src="assets/layers/04-spin-offs.png" alt="Spin-offs">
+      <img class="layer-books filter-layer" data-layer-name="books" src="assets/layers/05-books.png" alt="Books">
+      <img class="layer-video filter-layer" data-layer-name="video" src="assets/layers/06-video.png" alt="Video">
+      <img class="layer-upcoming filter-layer" data-layer-name="upcoming" src="assets/layers/07-upcoming.png" alt="Upcoming">
+      <img class="layer-comics filter-layer" data-layer-name="comics" src="assets/layers/08-comics.png" alt="Comics">
 
-        <img class="layer-main-games" src="assets/layers/09-main-games.png" alt="Main games">
+      <img class="layer-main-games" src="assets/layers/09-main-games.png" alt="Main games">
 
-        <img class="layer-labels lang-layer lang-en" src="assets/layers/11-labels-localization.png" alt="Labels EN">
-        <img class="layer-labels lang-layer lang-ru hidden" src="assets/layers/11-labels-localization-ru.png" alt="Labels RU">
+      <img class="layer-labels lang-layer lang-en" src="assets/layers/11-labels-localization.png" alt="Labels EN">
+      <img class="layer-labels lang-layer lang-ru hidden" src="assets/layers/11-labels-localization-ru.png" alt="Labels RU">
 
-        <img class="layer-borders" src="assets/layers/12-borders.png" alt="Borders">
-      </div>
+      <img class="layer-borders" src="assets/layers/12-borders.png" alt="Borders">
     </div>
+
+    <div class="corner-panel" id="hint" data-i18n="hint">
+      Drag to move · Wheel / pinch to zoom · Switch to Zoom Drag for drag-based zoom
+    </div>
+
+    <div class="toast" id="toast"></div>
   </main>
 
   <script>
+    const BASE_WIDTH = 5240;
+    const BASE_HEIGHT = 11294;
+    const STORAGE_KEY = 'ac-guide-viewer-v2';
+
+    const FILTERS = [
+      'spin-offs',
+      'books',
+      'nonref-books',
+      'comics',
+      'video',
+      'upcoming'
+    ];
+
+    const UI = {
+      en: {
+        title: "Assassin's Creed Universe Guide",
+        subtitle: 'Interactive layered prototype',
+        fitWidth: 'Fit Width',
+        fitHeight: 'Fit Height',
+        resetView: 'Reset View',
+        panMode: 'Move',
+        zoomMode: 'Zoom Drag',
+        mainFixed: 'Main Series',
+        spinOffs: 'Spin-offs',
+        books: 'Books',
+        nonfiction: 'Non-fiction',
+        comics: 'Comics',
+        video: 'Video',
+        upcoming: 'Upcoming',
+        resetFilters: 'Reset Filters',
+        share: 'Share',
+        hint: 'Drag to move · Wheel / pinch to zoom · Switch to Zoom Drag for drag-based zoom',
+        copied: 'Link copied',
+        copyFallback: 'Copy this link:'
+      },
+      ru: {
+        title: 'Гайд по вселенной Assassin’s Creed',
+        subtitle: 'Интерактивный прототип со слоями',
+        fitWidth: 'По ширине',
+        fitHeight: 'По высоте',
+        resetView: 'Сброс вида',
+        panMode: 'Двигать',
+        zoomMode: 'Зум drag',
+        mainFixed: 'Основная серия',
+        spinOffs: 'Спин-оффы',
+        books: 'Книги',
+        nonfiction: 'Нон-фикшн',
+        comics: 'Комиксы',
+        video: 'Видео',
+        upcoming: 'Будущее',
+        resetFilters: 'Сброс фильтров',
+        share: 'Поделиться',
+        hint: 'Тяни, чтобы двигать · Колесо / pinch — зум · Zoom Drag — зум движением мыши',
+        copied: 'Ссылка скопирована',
+        copyFallback: 'Скопируй ссылку:'
+      }
+    };
+
+    const viewer = document.querySelector('#viewer');
+    const guide = document.querySelector('#guide');
+    const toast = document.querySelector('#toast');
+
     const langButtons = document.querySelectorAll('.lang-btn');
     const langLayers = document.querySelectorAll('.lang-layer');
-
-    langButtons.forEach((button) => {
-      button.addEventListener('click', () => {
-        const lang = button.dataset.lang;
-
-        langButtons.forEach((btn) => {
-          btn.classList.toggle('active', btn === button);
-        });
-
-        langLayers.forEach((layer) => {
-          const isCurrentLang = layer.classList.contains(`lang-${lang}`);
-          layer.classList.toggle('hidden', !isCurrentLang);
-        });
-
-        document.documentElement.lang = lang;
-      });
-    });
-
     const checkboxes = document.querySelectorAll('input[type="checkbox"][data-layer]');
     const filterLayers = document.querySelectorAll('.filter-layer');
 
-    checkboxes.forEach((checkbox) => {
-      checkbox.addEventListener('change', () => {
-        const layerName = checkbox.dataset.layer;
+    const zoomOutButton = document.querySelector('#zoom-out');
+    const zoomInButton = document.querySelector('#zoom-in');
+    const zoomDisplayButton = document.querySelector('#zoom-display');
+    const fitWidthButton = document.querySelector('#fit-width');
+    const fitHeightButton = document.querySelector('#fit-height');
+    const resetViewButton = document.querySelector('#reset-view');
+    const resetFiltersButton = document.querySelector('#reset-filters');
+    const shareButton = document.querySelector('#share-view');
+    const modePanButton = document.querySelector('#mode-pan');
+    const modeZoomButton = document.querySelector('#mode-zoom');
 
-        filterLayers.forEach((layer) => {
-          if (layer.dataset.layerName === layerName) {
-            layer.classList.toggle('hidden', !checkbox.checked);
-          }
-        });
+    let fitScale = 1;
+    let saveTimer = null;
+    let toastTimer = null;
+
+    const state = {
+      lang: 'en',
+      mode: 'pan',
+      zoom: 1,
+      panX: 0,
+      panY: 0,
+      filters: {
+        'spin-offs': true,
+        'books': true,
+        'nonref-books': true,
+        'comics': true,
+        'video': true,
+        'upcoming': true
+      }
+    };
+
+    const pointers = new Map();
+
+    let drag = {
+      active: false,
+      pointerId: null,
+      startX: 0,
+      startY: 0,
+      startPanX: 0,
+      startPanY: 0,
+      startZoom: 1
+    };
+
+    let pinch = {
+      active: false,
+      startDistance: 0,
+      startZoom: 1
+    };
+
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function getScale() {
+      return fitScale * state.zoom;
+    }
+
+    function computeFitScale() {
+      const rect = viewer.getBoundingClientRect();
+      const padding = window.innerWidth <= 900 ? 16 : 32;
+      fitScale = Math.max(0.01, (rect.width - padding) / BASE_WIDTH);
+    }
+
+    function clampPan() {
+      const rect = viewer.getBoundingClientRect();
+      const scale = getScale();
+      const scaledWidth = BASE_WIDTH * scale;
+      const scaledHeight = BASE_HEIGHT * scale;
+      const padding = window.innerWidth <= 900 ? 10 : 16;
+
+      if (scaledWidth <= rect.width) {
+        state.panX = (rect.width - scaledWidth) / 2;
+      } else {
+        const minX = rect.width - scaledWidth - padding;
+        const maxX = padding;
+        state.panX = clamp(state.panX, minX, maxX);
+      }
+
+      if (scaledHeight <= rect.height) {
+        state.panY = (rect.height - scaledHeight) / 2;
+      } else {
+        const minY = rect.height - scaledHeight - padding;
+        const maxY = padding;
+        state.panY = clamp(state.panY, minY, maxY);
+      }
+    }
+
+    function applyTransform() {
+      clampPan();
+
+      const scale = getScale();
+      guide.style.transform = `translate3d(${state.panX}px, ${state.panY}px, 0) scale(${scale})`;
+
+      const percent = Math.round(state.zoom * 100);
+      zoomDisplayButton.textContent = `${percent}%`;
+    }
+
+    function saveState() {
+      window.clearTimeout(saveTimer);
+      saveTimer = window.setTimeout(() => {
+        const saved = {
+          lang: state.lang,
+          mode: state.mode,
+          zoom: state.zoom,
+          filters: state.filters
+        };
+
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+      }, 120);
+    }
+
+    function centerTop() {
+      const rect = viewer.getBoundingClientRect();
+      const scale = getScale();
+      const scaledWidth = BASE_WIDTH * scale;
+      const padding = window.innerWidth <= 900 ? 10 : 16;
+
+      state.panX = (rect.width - scaledWidth) / 2;
+      state.panY = padding;
+
+      applyTransform();
+    }
+
+    function fitWidth() {
+      state.zoom = 1;
+      centerTop();
+      saveState();
+    }
+
+    function fitHeight() {
+      const rect = viewer.getBoundingClientRect();
+      const padding = window.innerWidth <= 900 ? 16 : 32;
+      const targetScale = Math.max(0.01, (rect.height - padding) / BASE_HEIGHT);
+
+      state.zoom = clamp(targetScale / fitScale, 0.25, 8);
+
+      const scale = getScale();
+      state.panX = (rect.width - BASE_WIDTH * scale) / 2;
+      state.panY = (rect.height - BASE_HEIGHT * scale) / 2;
+
+      applyTransform();
+      saveState();
+    }
+
+    function resetView() {
+      state.zoom = 1;
+      centerTop();
+      saveState();
+    }
+
+    function zoomAt(clientX, clientY, nextZoom) {
+      const rect = viewer.getBoundingClientRect();
+
+      const oldScale = getScale();
+      const pointX = clientX - rect.left;
+      const pointY = clientY - rect.top;
+
+      const worldX = (pointX - state.panX) / oldScale;
+      const worldY = (pointY - state.panY) / oldScale;
+
+      state.zoom = clamp(nextZoom, 0.25, 8);
+
+      const newScale = getScale();
+
+      state.panX = pointX - worldX * newScale;
+      state.panY = pointY - worldY * newScale;
+
+      applyTransform();
+      saveState();
+    }
+
+    function zoomAtCenter(nextZoom) {
+      const rect = viewer.getBoundingClientRect();
+      zoomAt(rect.left + rect.width / 2, rect.top + rect.height / 2, nextZoom);
+    }
+
+    function setLanguage(lang) {
+      state.lang = lang;
+
+      document.documentElement.lang = lang;
+
+      langButtons.forEach((button) => {
+        button.classList.toggle('active', button.dataset.lang === lang);
+      });
+
+      langLayers.forEach((layer) => {
+        const isCurrentLang = layer.classList.contains(`lang-${lang}`);
+        layer.classList.toggle('hidden', !isCurrentLang);
+      });
+
+      const dictionary = UI[lang] || UI.en;
+
+      document.querySelectorAll('[data-i18n]').forEach((element) => {
+        const key = element.dataset.i18n;
+        if (dictionary[key]) {
+          element.textContent = dictionary[key];
+        }
+      });
+
+      saveState();
+    }
+
+    function setMode(mode) {
+      state.mode = mode;
+
+      viewer.classList.toggle('mode-pan', mode === 'pan');
+      viewer.classList.toggle('mode-zoom', mode === 'zoom');
+
+      modePanButton.classList.toggle('active', mode === 'pan');
+      modeZoomButton.classList.toggle('active', mode === 'zoom');
+
+      saveState();
+    }
+
+    function applyFilters() {
+      checkboxes.forEach((checkbox) => {
+        const key = checkbox.dataset.layer;
+        checkbox.checked = state.filters[key] !== false;
+      });
+
+      filterLayers.forEach((layer) => {
+        const key = layer.dataset.layerName;
+        layer.classList.toggle('hidden', state.filters[key] === false);
+      });
+
+      saveState();
+    }
+
+    function resetFilters() {
+      FILTERS.forEach((key) => {
+        state.filters[key] = true;
+      });
+
+      applyFilters();
+    }
+
+    function showToast(message) {
+      window.clearTimeout(toastTimer);
+      toast.textContent = message;
+      toast.classList.add('visible');
+
+      toastTimer = window.setTimeout(() => {
+        toast.classList.remove('visible');
+      }, 1600);
+    }
+
+    function getShareUrl() {
+      const url = new URL(window.location.href);
+
+      url.search = '';
+      url.searchParams.set('lang', state.lang);
+
+      if (state.mode !== 'pan') {
+        url.searchParams.set('mode', state.mode);
+      }
+
+      if (Math.abs(state.zoom - 1) > 0.01) {
+        url.searchParams.set('zoom', state.zoom.toFixed(2));
+      }
+
+      FILTERS.forEach((key) => {
+        if (state.filters[key] === false) {
+          url.searchParams.set(key, '0');
+        }
+      });
+
+      return url.toString();
+    }
+
+    async function shareView() {
+      const url = getShareUrl();
+      const dictionary = UI[state.lang] || UI.en;
+
+      try {
+        await navigator.clipboard.writeText(url);
+        showToast(dictionary.copied);
+      } catch (error) {
+        window.prompt(dictionary.copyFallback, url);
+      }
+    }
+
+    function readSavedState() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+
+        if (!saved) {
+          return;
+        }
+
+        if (saved.lang === 'en' || saved.lang === 'ru') {
+          state.lang = saved.lang;
+        }
+
+        if (saved.mode === 'pan' || saved.mode === 'zoom') {
+          state.mode = saved.mode;
+        }
+
+        if (typeof saved.zoom === 'number') {
+          state.zoom = clamp(saved.zoom, 0.25, 8);
+        }
+
+        if (saved.filters) {
+          FILTERS.forEach((key) => {
+            if (typeof saved.filters[key] === 'boolean') {
+              state.filters[key] = saved.filters[key];
+            }
+          });
+        }
+      } catch (error) {
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    }
+
+    function readUrlState() {
+      const params = new URLSearchParams(window.location.search);
+
+      const lang = params.get('lang');
+      const mode = params.get('mode');
+      const zoom = Number(params.get('zoom'));
+
+      if (lang === 'en' || lang === 'ru') {
+        state.lang = lang;
+      }
+
+      if (mode === 'pan' || mode === 'zoom') {
+        state.mode = mode;
+      }
+
+      if (Number.isFinite(zoom)) {
+        state.zoom = clamp(zoom, 0.25, 8);
+      }
+
+      FILTERS.forEach((key) => {
+        if (params.get(key) === '0') {
+          state.filters[key] = false;
+        }
+
+        if (params.get(key) === '1') {
+          state.filters[key] = true;
+        }
+      });
+    }
+
+    function getPointerDistance(items) {
+      const a = items[0];
+      const b = items[1];
+
+      return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+    }
+
+    function getPointerCenter(items) {
+      const a = items[0];
+      const b = items[1];
+
+      return {
+        x: (a.clientX + b.clientX) / 2,
+        y: (a.clientY + b.clientY) / 2
+      };
+    }
+
+    function startPinch() {
+      const items = Array.from(pointers.values());
+
+      if (items.length < 2) {
+        return;
+      }
+
+      pinch.active = true;
+      pinch.startDistance = getPointerDistance(items);
+      pinch.startZoom = state.zoom;
+    }
+
+    function stopInteraction(event) {
+      if (event && pointers.has(event.pointerId)) {
+        pointers.delete(event.pointerId);
+      }
+
+      if (drag.active && event && drag.pointerId === event.pointerId) {
+        drag.active = false;
+        drag.pointerId = null;
+      }
+
+      if (pointers.size < 2) {
+        pinch.active = false;
+      }
+
+      if (pointers.size === 0) {
+        viewer.classList.remove('is-panning');
+        viewer.classList.remove('is-zoom-dragging');
+      }
+    }
+
+    viewer.addEventListener('pointerdown', (event) => {
+      if (event.button !== 0 && event.pointerType === 'mouse') {
+        return;
+      }
+
+      event.preventDefault();
+
+      viewer.setPointerCapture(event.pointerId);
+
+      pointers.set(event.pointerId, {
+        clientX: event.clientX,
+        clientY: event.clientY
+      });
+
+      if (pointers.size === 2) {
+        startPinch();
+        return;
+      }
+
+      drag.active = true;
+      drag.pointerId = event.pointerId;
+      drag.startX = event.clientX;
+      drag.startY = event.clientY;
+      drag.startPanX = state.panX;
+      drag.startPanY = state.panY;
+      drag.startZoom = state.zoom;
+
+      viewer.classList.toggle('is-panning', state.mode === 'pan');
+      viewer.classList.toggle('is-zoom-dragging', state.mode === 'zoom');
+    });
+
+    viewer.addEventListener('pointermove', (event) => {
+      if (!pointers.has(event.pointerId)) {
+        return;
+      }
+
+      pointers.set(event.pointerId, {
+        clientX: event.clientX,
+        clientY: event.clientY
+      });
+
+      if (pointers.size >= 2 && pinch.active) {
+        const items = Array.from(pointers.values()).slice(0, 2);
+        const distance = getPointerDistance(items);
+        const center = getPointerCenter(items);
+        const ratio = distance / Math.max(1, pinch.startDistance);
+
+        zoomAt(center.x, center.y, pinch.startZoom * ratio);
+        return;
+      }
+
+      if (!drag.active || drag.pointerId !== event.pointerId) {
+        return;
+      }
+
+      const deltaX = event.clientX - drag.startX;
+      const deltaY = event.clientY - drag.startY;
+
+      if (state.mode === 'pan') {
+        state.panX = drag.startPanX + deltaX;
+        state.panY = drag.startPanY + deltaY;
+
+        applyTransform();
+        saveState();
+        return;
+      }
+
+      const zoomDelta = (deltaX - deltaY) * 0.003;
+      zoomAt(event.clientX, event.clientY, drag.startZoom + zoomDelta);
+    });
+
+    viewer.addEventListener('pointerup', stopInteraction);
+    viewer.addEventListener('pointercancel', stopInteraction);
+    viewer.addEventListener('lostpointercapture', stopInteraction);
+
+    viewer.addEventListener('wheel', (event) => {
+      event.preventDefault();
+
+      const zoomFactor = Math.exp(-event.deltaY * 0.001);
+      zoomAt(event.clientX, event.clientY, state.zoom * zoomFactor);
+    }, { passive: false });
+
+    langButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        setLanguage(button.dataset.lang);
       });
     });
+
+    checkboxes.forEach((checkbox) => {
+      checkbox.addEventListener('change', () => {
+        state.filters[checkbox.dataset.layer] = checkbox.checked;
+        applyFilters();
+      });
+    });
+
+    zoomOutButton.addEventListener('click', () => {
+      zoomAtCenter(state.zoom - 0.25);
+    });
+
+    zoomInButton.addEventListener('click', () => {
+      zoomAtCenter(state.zoom + 0.25);
+    });
+
+    zoomDisplayButton.addEventListener('click', resetView);
+    fitWidthButton.addEventListener('click', fitWidth);
+    fitHeightButton.addEventListener('click', fitHeight);
+    resetViewButton.addEventListener('click', resetView);
+    resetFiltersButton.addEventListener('click', resetFilters);
+    shareButton.addEventListener('click', shareView);
+
+    modePanButton.addEventListener('click', () => {
+      setMode('pan');
+    });
+
+    modeZoomButton.addEventListener('click', () => {
+      setMode('zoom');
+    });
+
+    window.addEventListener('keydown', (event) => {
+      const tag = document.activeElement.tagName.toLowerCase();
+
+      if (tag === 'input' || tag === 'button') {
+        return;
+      }
+
+      if (event.key === '+' || event.key === '=') {
+        event.preventDefault();
+        zoomAtCenter(state.zoom + 0.25);
+      }
+
+      if (event.key === '-') {
+        event.preventDefault();
+        zoomAtCenter(state.zoom - 0.25);
+      }
+
+      if (event.key === '0') {
+        event.preventDefault();
+        resetView();
+      }
+
+      if (event.key.toLowerCase() === 'f') {
+        event.preventDefault();
+        fitWidth();
+      }
+
+      if (event.key.toLowerCase() === 'h') {
+        event.preventDefault();
+        fitHeight();
+      }
+
+      if (event.key.toLowerCase() === 'z') {
+        event.preventDefault();
+        setMode(state.mode === 'pan' ? 'zoom' : 'pan');
+      }
+
+      if (event.key.toLowerCase() === 'r') {
+        event.preventDefault();
+        resetFilters();
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      const rect = viewer.getBoundingClientRect();
+      const oldScale = getScale();
+
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      const worldX = (centerX - state.panX) / oldScale;
+      const worldY = (centerY - state.panY) / oldScale;
+
+      computeFitScale();
+
+      const newScale = getScale();
+
+      state.panX = centerX - worldX * newScale;
+      state.panY = centerY - worldY * newScale;
+
+      applyTransform();
+    });
+
+    guide.querySelectorAll('img').forEach((img) => {
+      img.addEventListener('error', () => {
+        console.warn(`Layer not found: ${img.getAttribute('src')}`);
+      });
+    });
+
+    readSavedState();
+    readUrlState();
+
+    computeFitScale();
+    setLanguage(state.lang);
+    setMode(state.mode);
+    applyFilters();
+    centerTop();
+    applyTransform();
   </script>
 </body>
 </html>
