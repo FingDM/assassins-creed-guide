@@ -108,7 +108,14 @@
     }
 
     .layer-background { z-index: 0; }
-    .layer-backframes { z-index: 2; }
+
+    /*
+      01 теперь содержит:
+      - phase localization
+      - phase/backframe visuals
+      Поэтому слой лежит под контентом.
+    */
+    .layer-phases { z-index: 1; }
 
     .layer-nonref-books { z-index: 3; }
     .layer-spin-offs { z-index: 4; }
@@ -116,9 +123,13 @@
     .layer-video { z-index: 6; }
     .layer-upcoming { z-index: 7; }
     .layer-comics { z-index: 8; }
+
+    /*
+      Main games всегда включены.
+      Пользователь не может их отключить.
+    */
     .layer-main-games { z-index: 9; }
 
-    .layer-phases { z-index: 10; }
     .layer-labels { z-index: 11; }
     .layer-borders { z-index: 12; }
 
@@ -155,11 +166,6 @@
       </div>
 
       <div class="control-group">
-        <label>
-          <input type="checkbox" data-layer="main-games" checked>
-          Main
-        </label>
-
         <label>
           <input type="checkbox" data-layer="spin-offs" checked>
           Spin-offs
@@ -201,15 +207,14 @@
         <img class="layer-phases lang-layer lang-en" src="assets/layers/01-phases-localization.png" alt="Phases EN">
         <img class="layer-phases lang-layer lang-ru hidden" src="assets/layers/01-phases-localization-ru.png" alt="Phases RU">
 
-        <img class="layer-backframes" src="assets/layers/02-backframes.png" alt="Backframes">
-
         <img class="layer-nonref-books filter-layer" data-layer-name="nonref-books" src="assets/layers/03-nonref-books.png" alt="Non-fiction books">
         <img class="layer-spin-offs filter-layer" data-layer-name="spin-offs" src="assets/layers/04-spin-offs.png" alt="Spin-offs">
         <img class="layer-books filter-layer" data-layer-name="books" src="assets/layers/05-books.png" alt="Books">
         <img class="layer-video filter-layer" data-layer-name="video" src="assets/layers/06-video.png" alt="Video">
         <img class="layer-upcoming filter-layer" data-layer-name="upcoming" src="assets/layers/07-upcoming.png" alt="Upcoming">
         <img class="layer-comics filter-layer" data-layer-name="comics" src="assets/layers/08-comics.png" alt="Comics">
-        <img class="layer-main-games filter-layer" data-layer-name="main-games" src="assets/layers/09-main-games.png" alt="Main games">
+
+        <img class="layer-main-games" src="assets/layers/09-main-games.png" alt="Main games">
 
         <img class="layer-labels lang-layer lang-en" src="assets/layers/11-labels-localization.png" alt="Labels EN">
         <img class="layer-labels lang-layer lang-ru hidden" src="assets/layers/11-labels-localization-ru.png" alt="Labels RU">
