@@ -33,6 +33,7 @@
       --active: #ffffff;
       --active-text: #071018;
       --radius: 10px;
+      --mobile-menu-top: 150px;
 
       --color-main-series: #D43144;
       --color-spin-offs: #28E989;
@@ -257,6 +258,32 @@
       align-items: center;
     }
 
+    .toggle-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.075);
+      color: var(--text);
+      border-radius: var(--radius);
+      padding: 8px 10px;
+      font-size: 13px;
+      line-height: 1;
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .toggle-pill:hover {
+      border-color: var(--line-strong);
+      background: rgba(255, 255, 255, 0.13);
+    }
+
+    .toggle-pill input {
+      margin: 0;
+      accent-color: #ffffff;
+    }
+
     .contentbar {
       position: relative;
       z-index: 90;
@@ -421,10 +448,6 @@
       color: #071018;
     }
 
-    .about-button-mobile {
-      display: none;
-    }
-
     .zoom-display {
       min-width: 58px;
       text-align: center;
@@ -522,6 +545,10 @@
       color: var(--muted);
       font-size: 12px;
       pointer-events: none;
+    }
+
+    .corner-panel.is-hidden {
+      display: none !important;
     }
 
     .toast {
@@ -737,6 +764,7 @@
         width: 100%;
         justify-content: flex-start;
         overflow-x: auto;
+        overflow-y: visible;
         padding-bottom: 2px;
       }
 
@@ -745,23 +773,25 @@
       }
 
       .menu-panel {
-        left: 0;
-        right: auto;
-        width: min(380px, calc(100vw - 20px));
+        position: fixed;
+        top: var(--mobile-menu-top);
+        left: 10px;
+        right: 10px;
+        width: auto;
+        max-height: calc(100vh - var(--mobile-menu-top) - 92px);
+        overflow-y: auto;
+        overscroll-behavior: contain;
       }
 
       .contentbar {
         display: none;
       }
 
-      .about-button-mobile {
-        display: inline-flex;
-      }
-
       button,
       select,
       summary,
       .check-pill,
+      .toggle-pill,
       .fixed-pill {
         min-height: 36px;
         padding: 9px 11px;
@@ -777,7 +807,15 @@
       }
 
       .corner-panel {
-        display: none;
+        left: 10px;
+        right: 10px;
+        bottom: 84px;
+        z-index: 150;
+        max-width: none;
+        justify-content: center;
+        text-align: center;
+        font-size: 11px;
+        line-height: 1.3;
       }
 
       .toast {
@@ -836,9 +874,16 @@
         box-shadow: 0 16px 44px rgba(0, 0, 0, 0.38);
       }
 
+      .mobile-action-about {
+        background: var(--color-about);
+        border-color: var(--color-about);
+        color: #071018;
+        font-weight: 700;
+      }
+
       .mobile-action-how {
-        background: var(--color-how);
-        border-color: var(--color-how);
+        background: var(--color-main-series);
+        border-color: var(--color-main-series);
         color: #ffffff;
         font-weight: 700;
       }
@@ -860,7 +905,7 @@
 </head>
 
 <body>
-  <header class="topbar">
+  <header class="topbar" id="topbar">
     <div class="brand">
       <div class="title" data-i18n="title">Assassin's Creed Universe Guide</div>
       <div class="subtitle" data-i18n="subtitle">Interactive guide</div>
@@ -886,7 +931,7 @@
       </label>
 
       <details class="menu" id="view-menu">
-        <summary data-i18n="viewSettings">View</summary>
+        <summary id="view-summary" data-i18n="viewSettings">View</summary>
 
         <div class="menu-panel">
           <div class="menu-group">
@@ -912,15 +957,22 @@
           <div class="menu-group">
             <div class="menu-group-title" data-i18n="navigationGroup">Control mode</div>
             <div class="menu-help" data-i18n="navigationHelp">Move guide: drag the scheme around. Drag to zoom: hold and move right/up to zoom in, left/down to zoom out.</div>
+
             <div class="menu-row">
               <button id="mode-pan" class="active" type="button" data-mode="pan" data-i18n="panMode">Move guide</button>
               <button id="mode-zoom" type="button" data-mode="zoom" data-i18n="zoomMode">Drag to zoom</button>
+            </div>
+
+            <div class="menu-row">
+              <label class="toggle-pill">
+                <input id="hint-toggle" type="checkbox" checked>
+                <span data-i18n="showHint">Show navigation hint</span>
+              </label>
             </div>
           </div>
         </div>
       </details>
 
-      <button class="about-button about-button-mobile about-open-button" type="button" data-i18n="aboutButton">About</button>
       <button id="share-view" type="button" data-i18n="share">Share</button>
     </div>
   </header>
@@ -999,9 +1051,9 @@
   </main>
 
   <div class="mobile-bottombar">
+    <button id="mobile-about-open" class="mobile-action-about" type="button" data-i18n="aboutButton">About</button>
     <button id="mobile-how-open" class="mobile-action-how" type="button" data-i18n="howButton">How to..?</button>
     <button id="mobile-filters-open" class="mobile-action-filters" type="button" data-i18n="filtersButton">Filters</button>
-    <button id="mobile-view-open" type="button" data-i18n="viewSettings">View</button>
   </div>
 
   <div id="language-loader" class="language-loader hidden" aria-live="polite">
@@ -1100,9 +1152,9 @@
         <div id="about-content"></div>
 
         <div class="about-links">
-          <a class="about-link" href="https://vk.com/club23679233" target="_blank" rel="noopener noreferrer" data-i18n="linkVk">VK</a>
-          <a class="about-link" href="https://x.com/AssassinsRussia" target="_blank" rel="noopener noreferrer" data-i18n="linkTwitter">Twitter / X</a>
-          <a class="about-link" href="https://www.linkedin.com/in/fingdm" target="_blank" rel="noopener noreferrer" data-i18n="linkLinkedIn">Author LinkedIn</a>
+          <a class="about-link" href="https://vk.com/club23679233" target="_blank" rel="noopener noreferrer">VK</a>
+          <a class="about-link" href="https://x.com/AssassinsRussia" target="_blank" rel="noopener noreferrer">Twitter / X</a>
+          <a class="about-link" href="https://www.linkedin.com/in/fingdm" target="_blank" rel="noopener noreferrer">Author LinkedIn</a>
         </div>
       </div>
     </div>
@@ -1111,7 +1163,7 @@
   <script>
     const BASE_WIDTH = 3000;
     const BASE_HEIGHT = 6466;
-    const STORAGE_KEY = 'ac-guide-optimized-viewer-v11';
+    const STORAGE_KEY = 'ac-guide-optimized-viewer-v16';
     const WELCOME_KEY = 'ac-guide-welcome-seen-v1';
 
     const BASE_BY_LANG = {
@@ -1150,6 +1202,7 @@
         fitHelp: 'Fit the guide by width or height, or return to the default width view.',
         navigationGroup: 'Control mode',
         navigationHelp: 'Move guide: drag the scheme around. Drag to zoom: hold and move right/up to zoom in, left/down to zoom out.',
+        showHint: 'Show navigation hint',
         contentFilters: 'Content filters',
         howButton: 'How to..?',
         filtersButton: 'Filters',
@@ -1172,9 +1225,6 @@
         copied: 'Link copied',
         copyFallback: 'Copy this link:',
         switching: 'Switching language may take a few seconds. Please wait...',
-        linkVk: 'VK',
-        linkTwitter: 'Twitter / X',
-        linkLinkedIn: 'Author LinkedIn',
         welcome: {
           title: 'Welcome to the Assassin’s Creed Universe Guide',
           close: 'Got it',
@@ -1182,7 +1232,7 @@
           paragraphs: [
             'This is an interactive layered guide to the Assassin’s Creed universe. It brings together the main games, spin-offs, books, comics, video materials and upcoming projects in one visual structure.',
             'The red tiles are the main game series. They are always visible and cannot be disabled. The colored buttons control additional layers: spin-offs, books, non-fiction, comics, video materials and upcoming projects.',
-            'Use the language selector in the top panel to switch localization. On desktop, use the View menu for zoom, fitting the guide to the screen and navigation modes. On mobile, use the bottom buttons: How to..?, Filters and View.',
+            'Use the language selector in the top panel to switch localization. On desktop, use the View menu for zoom, fitting the guide to the screen and navigation modes. On mobile, use the bottom buttons: About, How to..? and Filters.',
             'If the guide feels overwhelming, start with the How to..? button. It explains several ways to explore the series depending on whether you want the full experience, a modern entry point, or a specific historical setting.',
             'To hide this welcome message, press “Got it” or the × button. It will not appear again automatically on this device.'
           ]
@@ -1190,18 +1240,9 @@
         how: {
           title: 'Taking a leap of faith…',
           items: [
-            {
-              title: 'Full immersion.',
-              text: 'If you are new to the franchise and want to experience the whole main game series, simply follow the red tiles in the infographic. If you want more, add spin-offs and video materials. If you want to dive fully into the world of Assassin’s Creed, start exploring the books and comics too.'
-            },
-            {
-              title: 'Fresh blood.',
-              text: 'If you want to get into the series but do not feel like going back to 2007, you can skip the “golden era” of the franchise and start with the soft reboot, Assassin’s Creed Origins. Some pieces of lore may feel unclear, but you can always look them up when needed.'
-            },
-            {
-              title: 'A journey through eras.',
-              text: 'If you are not interested in the modern-day storyline, Pieces of Eden, or deeper lore, feel free to launch any project from the red tiles. Into pirates? Assassin’s Creed Black Flag is ready for you. Like Victorian London? Welcome to Assassin’s Creed Syndicate. Finished a game and enjoyed it? Then move on to its related comics or books.'
-            }
+            { title: 'Full immersion.', text: 'If you are new to the franchise and want to experience the whole main game series, simply follow the red tiles in the infographic. If you want more, add spin-offs and video materials. If you want to dive fully into the world of Assassin’s Creed, start exploring the books and comics too.' },
+            { title: 'Fresh blood.', text: 'If you want to get into the series but do not feel like going back to 2007, you can skip the “golden era” of the franchise and start with the soft reboot, Assassin’s Creed Origins. Some pieces of lore may feel unclear, but you can always look them up when needed.' },
+            { title: 'A journey through eras.', text: 'If you are not interested in the modern-day storyline, Pieces of Eden, or deeper lore, feel free to launch any project from the red tiles. Into pirates? Assassin’s Creed Black Flag is ready for you. Like Victorian London? Welcome to Assassin’s Creed Syndicate. Finished a game and enjoyed it? Then move on to its related comics or books.' }
           ]
         },
         about: {
@@ -1228,6 +1269,7 @@
         fitHelp: 'Можно вписать схему по ширине, по высоте или вернуть обычный вид по ширине.',
         navigationGroup: 'Режим управления',
         navigationHelp: '«Перемещать схему» — тяните схему мышью или пальцем. «Масштабировать перетаскиванием» — зажмите и двигайте вправо/вверх для приближения, влево/вниз для отдаления.',
+        showHint: 'Показывать подсказку',
         contentFilters: 'Фильтры контента',
         howButton: 'Как изучать?',
         filtersButton: 'Фильтры',
@@ -1250,9 +1292,6 @@
         copied: 'Ссылка скопирована',
         copyFallback: 'Скопируй ссылку:',
         switching: 'Переключение языка может занять несколько секунд. Пожалуйста, подождите...',
-        linkVk: 'VK',
-        linkTwitter: 'Twitter / X',
-        linkLinkedIn: 'LinkedIn автора',
         welcome: {
           title: 'Добро пожаловать в гайд по вселенной Assassin’s Creed',
           close: 'Понятно',
@@ -1260,7 +1299,7 @@
           paragraphs: [
             'Это интерактивный многослойный гайд по вселенной Assassin’s Creed. Он объединяет основную серию игр, спин-оффы, книги, комиксы, видеоматериалы и предстоящие проекты в одной визуальной структуре.',
             'Красные плитки — это основная серия игр. Она всегда отображается и не отключается. Цветные кнопки управляют дополнительными слоями: спин-оффами, книгами, нон-фикшн материалами, комиксами, видео и будущими проектами.',
-            'В верхней панели можно выбрать язык. На ПК меню «Вид» отвечает за масштаб, подгонку гайда под экран и режимы навигации. На телефоне основные действия вынесены вниз: «Как изучать?», «Фильтры» и «Вид».',
+            'В верхней панели можно выбрать язык. На ПК меню «Вид» отвечает за масштаб, подгонку гайда под экран и режимы навигации. На телефоне основные действия вынесены вниз: «О проекте», «Как изучать?» и «Фильтры».',
             'Если гайд кажется слишком большим и непонятным, начните с кнопки «Как изучать?». Там описаны несколько сценариев: полное погружение, современная точка входа или выбор игры по любимой исторической эпохе.',
             'Чтобы скрыть это приветствие, нажмите «Понятно» или кнопку ×. После этого окно больше не будет автоматически появляться на этом устройстве.'
           ]
@@ -1268,18 +1307,9 @@
         how: {
           title: 'Совершаем прыжок веры…',
           items: [
-            {
-              title: 'Полное погружение.',
-              text: 'Если вы новичок, которому интересна вся основная серия игр, — просто следуйте красным плиткам в инфографике. Если вы хотите большего — можете изучить спин-оффы и видеоматериалы. Желаете по полной окунуться в мир Assassin’s Creed — начинайте осваивать книги и комиксы.'
-            },
-            {
-              title: 'Свежая кровь.',
-              text: 'Если планируете вкатиться в серию, но не хочется возвращаться в 2007, можно скипнуть «золотую эру» франшизы и стартануть с софт-ребута — Assassin’s Creed Origins. Конечно, какие-то фрагменты лора будут казаться непонятными, но при случае их можно уточнить в интернете.'
-            },
-            {
-              title: 'Путешествие по эпохам.',
-              text: 'Если вам неинтересно, что такое «современность» в играх, Частицы Эдема или прочий лор, тогда смело запускайте любой проект из красных плиток. Кайфуете от пиратской тематики? Assassin’s Creed Black Flag в вашем распоряжении. Нравится викторианский Лондон? Добро пожаловать в Assassin’s Creed Syndicate. Прошли игру и понравилось? Переключайтесь на сопутствующие комиксы и книги.'
-            }
+            { title: 'Полное погружение.', text: 'Если вы новичок, которому интересна вся основная серия игр, — просто следуйте красным плиткам в инфографике. Если вы хотите большего — можете изучить спин-оффы и видеоматериалы. Желаете по полной окунуться в мир Assassin’s Creed — начинайте осваивать книги и комиксы.' },
+            { title: 'Свежая кровь.', text: 'Если планируете вкатиться в серию, но не хочется возвращаться в 2007, можно скипнуть «золотую эру» франшизы и стартануть с софт-ребута — Assassin’s Creed Origins. Конечно, какие-то фрагменты лора будут казаться непонятными, но при случае их можно уточнить в интернете.' },
+            { title: 'Путешествие по эпохам.', text: 'Если вам неинтересно, что такое «современность» в играх, Частицы Эдема или прочий лор, тогда смело запускайте любой проект из красных плиток. Кайфуете от пиратской тематики? Assassin’s Creed Black Flag в вашем распоряжении. Нравится викторианский Лондон? Добро пожаловать в Assassin’s Creed Syndicate. Прошли игру и понравилось? Переключайтесь на сопутствующие комиксы и книги.' }
           ]
         },
         about: {
@@ -1293,795 +1323,388 @@
             'Assassin’s Creed является торговой маркой Ubisoft.'
           ]
         }
-      },
-
-      'zh-CN': {
-        title: '刺客信条宇宙指南',
-        subtitle: '交互式指南',
-        languageLabel: '语言',
-        viewSettings: '视图',
-        zoomGroup: '缩放',
-        zoomHelp: '放大或缩小指南。',
-        fitGroup: '适应屏幕',
-        fitHelp: '按宽度或高度适配指南，或返回默认宽度视图。',
-        navigationGroup: '控制模式',
-        navigationHelp: '移动指南：拖动指南。拖动缩放：按住并向右/上移动放大，向左/下移动缩小。',
-        contentFilters: '内容筛选',
-        howButton: '如何开始？',
-        filtersButton: '筛选',
-        aboutButton: '关于项目',
-        fitWidth: '适应宽度',
-        fitHeight: '适应高度',
-        resetView: '默认视图',
-        panMode: '移动指南',
-        zoomMode: '拖动缩放',
-        mainFixed: '主系列',
-        spinOffs: '衍生游戏',
-        books: '书籍',
-        nonfiction: '非虚构',
-        comics: '漫画',
-        video: '视频',
-        upcoming: '即将推出',
-        resetFilters: '重置筛选',
-        share: '分享',
-        hint: '拖动指南即可移动。缩放可使用“视图”菜单、Ctrl + 滚轮，或在手机上双指缩放。',
-        copied: '链接已复制',
-        copyFallback: '复制此链接：',
-        switching: '切换语言可能需要几秒钟。请稍候...',
-        linkVk: 'VK',
-        linkTwitter: 'Twitter / X',
-        linkLinkedIn: '作者 LinkedIn',
-        welcome: {
-          title: '欢迎使用 Assassin’s Creed 宇宙指南',
-          close: '明白了',
-          openHow: '打开“如何开始？”',
-          paragraphs: [
-            '这是一个交互式分层指南，将 Assassin’s Creed 的主系列游戏、衍生作品、书籍、漫画、视频内容和未来项目整合在同一张视觉结构中。',
-            '红色方块代表主系列游戏。它们始终显示，无法关闭。彩色按钮控制额外内容层，包括衍生游戏、书籍、非虚构内容、漫画、视频和未来项目。',
-            '你可以在顶部面板切换语言。在桌面端，“视图”菜单用于缩放、适配屏幕和切换导航模式。在手机端，主要操作放在底部：如何开始、筛选和视图。',
-            '如果这张指南看起来太庞大，可以先点击“如何开始？”。那里会介绍几种使用方式：完整体验、现代入门路线，或按自己喜欢的历史时代选择作品。',
-            '要关闭这条欢迎信息，请点击“明白了”或 ×。之后它不会在此设备上自动再次出现。'
-          ]
-        },
-        how: {
-          title: '来一次信仰之跃…',
-          items: [
-            {
-              title: '完整沉浸。',
-              text: '如果你是新人，并且想体验整个主系列游戏，就按信息图中的红色方块顺序游玩。想了解更多，可以加入衍生游戏和视频内容。想彻底进入 Assassin’s Creed 的世界，则可以继续阅读小说、设定书和漫画。'
-            },
-            {
-              title: '新鲜血液。',
-              text: '如果你想入坑这个系列，但不想从 2007 年的作品开始，可以跳过系列的“黄金时代”，从软重启作品 Assassin’s Creed Origins 开始。部分剧情和设定可能会显得不太清楚，但需要时可以再查资料补上。'
-            },
-            {
-              title: '穿越各个时代。',
-              text: '如果你对现代线、伊甸碎片或复杂设定不感兴趣，可以直接选择任意红色方块中的主系列作品。喜欢海盗题材？Assassin’s Creed Black Flag 很适合你。喜欢维多利亚时代的伦敦？那就试试 Assassin’s Creed Syndicate。通关后如果喜欢，再去看相关漫画和书籍。'
-            }
-          ]
-        },
-        about: {
-          title: '关于项目',
-          paragraphs: [
-            'Assassin’s Creed | RU 是俄罗斯和独联体国家中专注于经典 Assassin’s Creed 系列的重要项目。该项目自 2011 年起持续运营，帮助老玩家和新玩家保持对品牌的兴趣。',
-            '多年来，我们的平台与 Ubisoft 保持着长期合作与联系，并通过多项官方活动积极支持 Assassin’s Creed 社区。我们也曾参与 Ubisoft 过去的 Star Players 和 Mentors Guild 项目，从而更深入地参与社区建设，并更贴近地代表忠实粉丝的利益。',
-            '除了支持 Ubisoft 之外，我们也曾有机会与 20th Century Fox、Tornado Energy 等公司合作。',
-            '我们还参与系列游戏开发，并参与 Assassin’s Creed 相关文学作品的俄语翻译。',
-            '本指南仅用于信息介绍目的。',
-            'Assassin’s Creed 是 Ubisoft 的商标。'
-          ]
-        }
-      },
-
-      es: {
-        title: 'Guía del universo de Assassin’s Creed',
-        subtitle: 'Guía interactiva',
-        languageLabel: 'Idioma',
-        viewSettings: 'Vista',
-        zoomGroup: 'Escala',
-        zoomHelp: 'Aumenta o reduce el tamaño de la guía.',
-        fitGroup: 'Ajuste en pantalla',
-        fitHelp: 'Ajusta la guía al ancho, a la altura o vuelve a la vista normal por ancho.',
-        navigationGroup: 'Modo de control',
-        navigationHelp: 'Mover guía: arrastra la guía. Zoom al arrastrar: mantén pulsado y mueve a la derecha/arriba para acercar, a la izquierda/abajo para alejar.',
-        contentFilters: 'Filtros de contenido',
-        howButton: '¿Cómo empezar?',
-        filtersButton: 'Filtros',
-        aboutButton: 'Acerca del proyecto',
-        fitWidth: 'Ajustar al ancho',
-        fitHeight: 'Ajustar a la altura',
-        resetView: 'Vista normal',
-        panMode: 'Mover guía',
-        zoomMode: 'Zoom al arrastrar',
-        mainFixed: 'Serie principal',
-        spinOffs: 'Spin-offs',
-        books: 'Libros',
-        nonfiction: 'No ficción',
-        comics: 'Cómics',
-        video: 'Video',
-        upcoming: 'Próximos',
-        resetFilters: 'Restablecer filtros',
-        share: 'Compartir',
-        hint: 'Arrastra la guía para moverte. Usa Vista para el zoom, Ctrl + rueda o pellizcar en móvil.',
-        copied: 'Enlace copiado',
-        copyFallback: 'Copia este enlace:',
-        switching: 'Cambiar el idioma puede tardar unos segundos. Por favor, espera...',
-        linkVk: 'VK',
-        linkTwitter: 'Twitter / X',
-        linkLinkedIn: 'LinkedIn del autor',
-        welcome: {
-          title: 'Bienvenido a la guía del universo Assassin’s Creed',
-          close: 'Entendido',
-          openHow: 'Abrir “¿Cómo empezar?”',
-          paragraphs: [
-            'Esta es una guía interactiva por capas del universo Assassin’s Creed. Reúne la serie principal, spin-offs, libros, cómics, materiales de video y próximos proyectos en una sola estructura visual.',
-            'Las casillas rojas son la serie principal de juegos. Siempre están visibles y no se pueden desactivar. Los botones de colores controlan capas adicionales: spin-offs, libros, no ficción, cómics, video y proyectos futuros.',
-            'Puedes cambiar el idioma desde el panel superior. En escritorio, el menú Vista permite controlar el zoom, ajustar la guía a la pantalla y cambiar los modos de navegación. En móvil, las acciones principales están abajo: ¿Cómo empezar?, Filtros y Vista.',
-            'Si la guía parece demasiado grande, empieza con el botón “¿Cómo empezar?”. Ahí se explican varias rutas: experiencia completa, entrada moderna o elección por época histórica favorita.',
-            'Para ocultar este mensaje, pulsa “Entendido” o el botón ×. No volverá a aparecer automáticamente en este dispositivo.'
-          ]
-        },
-        how: {
-          title: 'Damos un salto de fe…',
-          items: [
-            {
-              title: 'Inmersión completa.',
-              text: 'Si eres nuevo y te interesa toda la serie principal de juegos, sigue simplemente las casillas rojas de la infografía. Si quieres más, añade spin-offs y materiales de video. Y si quieres sumergirte por completo en el mundo de Assassin’s Creed, empieza también con los libros y cómics.'
-            },
-            {
-              title: 'Sangre nueva.',
-              text: 'Si quieres entrar en la saga pero no te apetece volver a 2007, puedes saltarte la “era dorada” de la franquicia y empezar por el reinicio suave: Assassin’s Creed Origins. Algunas partes del lore pueden parecer confusas, pero siempre puedes consultarlas cuando haga falta.'
-            },
-            {
-              title: 'Viaje por las épocas.',
-              text: 'Si no te interesa la trama del presente, los Fragmentos del Edén ni el lore más profundo, puedes iniciar cualquier proyecto de las casillas rojas. ¿Te atraen los piratas? Assassin’s Creed Black Flag está a tu disposición. ¿Te gusta el Londres victoriano? Bienvenido a Assassin’s Creed Syndicate. Si terminas un juego y te gusta, pasa a sus cómics o libros relacionados.'
-            }
-          ]
-        },
-        about: {
-          title: 'Acerca del proyecto',
-          paragraphs: [
-            'Assassin’s Creed | RU es un proyecto líder dedicado a la icónica franquicia Assassin’s Creed en Rusia y los países de la CEI. Nuestro proyecto está activo desde 2011 y ayuda a mantener el interés por la marca tanto entre fans veteranos como entre nuevos jugadores.',
-            'A lo largo de los años, nuestro portal ha mantenido una relación duradera con Ubisoft y ha apoyado activamente a la comunidad de Assassin’s Creed mediante diversas iniciativas oficiales. También participamos en los antiguos programas Star Players y Mentors Guild de Ubisoft, lo que nos permitió contribuir más de cerca a la comunidad y representar los intereses de fans dedicados.',
-            'Además de apoyar a Ubisoft, también tuvimos la oportunidad de colaborar con compañías como 20th Century Fox y Tornado Energy.',
-            'También participamos en el desarrollo de juegos de la serie y en la traducción de literatura de Assassin’s Creed al ruso.',
-            'Esta guía se ha creado exclusivamente con fines informativos.',
-            'Assassin’s Creed es una marca registrada de Ubisoft.'
-          ]
-        }
-      },
-
-      fr: {
-        title: 'Guide de l’univers Assassin’s Creed',
-        subtitle: 'Guide interactif',
-        languageLabel: 'Langue',
-        viewSettings: 'Affichage',
-        zoomGroup: 'Échelle',
-        zoomHelp: 'Agrandit ou réduit le guide.',
-        fitGroup: 'Ajustement à l’écran',
-        fitHelp: 'Ajustez le guide à la largeur, à la hauteur, ou revenez à la vue normale en largeur.',
-        navigationGroup: 'Mode de contrôle',
-        navigationHelp: 'Déplacer le guide : faites glisser le guide. Zoom par glissement : maintenez et déplacez vers la droite/haut pour zoomer, vers la gauche/bas pour dézoomer.',
-        contentFilters: 'Filtres de contenu',
-        howButton: 'Comment commencer ?',
-        filtersButton: 'Filtres',
-        aboutButton: 'À propos du projet',
-        fitWidth: 'Adapter à la largeur',
-        fitHeight: 'Adapter à la hauteur',
-        resetView: 'Vue normale',
-        panMode: 'Déplacer le guide',
-        zoomMode: 'Zoom par glissement',
-        mainFixed: 'Série principale',
-        spinOffs: 'Jeux dérivés',
-        books: 'Livres',
-        nonfiction: 'Documentaire',
-        comics: 'BD',
-        video: 'Vidéo',
-        upcoming: 'À venir',
-        resetFilters: 'Réinitialiser les filtres',
-        share: 'Partager',
-        hint: 'Faites glisser le guide pour vous déplacer. Utilisez Affichage pour le zoom, Ctrl + molette ou le pincement sur mobile.',
-        copied: 'Lien copié',
-        copyFallback: 'Copiez ce lien :',
-        switching: 'Le changement de langue peut prendre quelques secondes. Veuillez patienter...',
-        linkVk: 'VK',
-        linkTwitter: 'Twitter / X',
-        linkLinkedIn: 'LinkedIn de l’auteur',
-        welcome: {
-          title: 'Bienvenue dans le guide de l’univers Assassin’s Creed',
-          close: 'Compris',
-          openHow: 'Ouvrir “Comment commencer ?”',
-          paragraphs: [
-            'Il s’agit d’un guide interactif en couches consacré à l’univers Assassin’s Creed. Il rassemble la série principale, les jeux dérivés, les livres, les comics, les contenus vidéo et les projets à venir dans une seule structure visuelle.',
-            'Les tuiles rouges correspondent à la série principale de jeux. Elles restent toujours visibles et ne peuvent pas être désactivées. Les boutons colorés contrôlent les couches supplémentaires : jeux dérivés, livres, documentaires, comics, vidéos et futurs projets.',
-            'Vous pouvez changer la langue dans le panneau supérieur. Sur ordinateur, le menu Affichage permet de gérer le zoom, l’adaptation à l’écran et les modes de navigation. Sur mobile, les actions principales se trouvent en bas : Comment commencer ?, Filtres et Affichage.',
-            'Si le guide semble trop dense, commencez par le bouton “Comment commencer ?”. Il présente plusieurs parcours : immersion complète, point d’entrée moderne ou choix selon une époque historique qui vous intéresse.',
-            'Pour fermer ce message, appuyez sur “Compris” ou sur ×. Il ne réapparaîtra plus automatiquement sur cet appareil.'
-          ]
-        },
-        how: {
-          title: 'Faisons un saut de la foi…',
-          items: [
-            {
-              title: 'Immersion complète.',
-              text: 'Si vous débutez et que toute la série principale vous intéresse, suivez simplement les tuiles rouges de l’infographie. Si vous voulez aller plus loin, ajoutez les jeux dérivés et les contenus vidéo. Pour plonger totalement dans l’univers Assassin’s Creed, commencez aussi les livres et les comics.'
-            },
-            {
-              title: 'Sang neuf.',
-              text: 'Si vous voulez découvrir la série sans revenir à 2007, vous pouvez sauter “l’âge d’or” de la franchise et commencer par le soft reboot : Assassin’s Creed Origins. Certains éléments de lore peuvent sembler flous, mais vous pourrez les vérifier au besoin.'
-            },
-            {
-              title: 'Voyage à travers les époques.',
-              text: 'Si la trame moderne, les Fragments d’Éden ou le lore plus profond ne vous intéressent pas, lancez n’importe quel projet des tuiles rouges. Vous aimez les pirates ? Assassin’s Creed Black Flag vous attend. Le Londres victorien vous attire ? Bienvenue dans Assassin’s Creed Syndicate. Vous avez terminé un jeu et l’avez aimé ? Passez aux comics ou livres associés.'
-            }
-          ]
-        },
-        about: {
-          title: 'À propos du projet',
-          paragraphs: [
-            'Assassin’s Creed | RU est un projet majeur consacré à la franchise culte Assassin’s Creed en Russie et dans les pays de la CEI. Actif depuis 2011, notre projet contribue à maintenir l’intérêt pour la marque auprès des fans de longue date comme des nouveaux joueurs.',
-            'Au fil des années, notre portail a entretenu une relation durable avec Ubisoft et a activement soutenu la communauté Assassin’s Creed à travers diverses initiatives officielles. Nous avons également participé aux anciens programmes Star Players et Mentors Guild d’Ubisoft, ce qui nous a permis de contribuer plus directement à la communauté et de représenter les intérêts des fans les plus engagés.',
-            'En plus de soutenir Ubisoft, nous avons aussi eu l’occasion de collaborer avec des sociétés telles que 20th Century Fox et Tornado Energy.',
-            'Nous participons également au développement de jeux de la série et à la traduction de la littérature Assassin’s Creed en russe.',
-            'Ce guide est réalisé uniquement à des fins informatives.',
-            'Assassin’s Creed est une marque commerciale d’Ubisoft.'
-          ]
-        }
-      },
-
-      'pt-BR': {
-        title: 'Guia do universo de Assassin’s Creed',
-        subtitle: 'Guia interativo',
-        languageLabel: 'Idioma',
-        viewSettings: 'Visualização',
-        zoomGroup: 'Escala',
-        zoomHelp: 'Aumenta ou reduz o tamanho do guia.',
-        fitGroup: 'Ajuste na tela',
-        fitHelp: 'Ajuste o guia à largura, à altura ou volte para a visualização normal por largura.',
-        navigationGroup: 'Modo de controle',
-        navigationHelp: 'Mover guia: arraste o guia. Zoom ao arrastar: segure e mova para a direita/cima para aproximar, para a esquerda/baixo para afastar.',
-        contentFilters: 'Filtros de conteúdo',
-        howButton: 'Como começar?',
-        filtersButton: 'Filtros',
-        aboutButton: 'Sobre o projeto',
-        fitWidth: 'Ajustar à largura',
-        fitHeight: 'Ajustar à altura',
-        resetView: 'Visualização normal',
-        panMode: 'Mover guia',
-        zoomMode: 'Zoom ao arrastar',
-        mainFixed: 'Série principal',
-        spinOffs: 'Jogos derivados',
-        books: 'Livros',
-        nonfiction: 'Não ficção',
-        comics: 'Quadrinhos',
-        video: 'Vídeo',
-        upcoming: 'Futuros',
-        resetFilters: 'Redefinir filtros',
-        share: 'Compartilhar',
-        hint: 'Arraste o guia para se mover. Use Visualização para zoom, Ctrl + roda ou gesto de pinça no celular.',
-        copied: 'Link copiado',
-        copyFallback: 'Copie este link:',
-        switching: 'A troca de idioma pode levar alguns segundos. Aguarde...',
-        linkVk: 'VK',
-        linkTwitter: 'Twitter / X',
-        linkLinkedIn: 'LinkedIn do autor',
-        welcome: {
-          title: 'Bem-vindo ao guia do universo Assassin’s Creed',
-          close: 'Entendi',
-          openHow: 'Abrir “Como começar?”',
-          paragraphs: [
-            'Este é um guia interativo em camadas do universo Assassin’s Creed. Ele reúne a série principal, spin-offs, livros, quadrinhos, materiais em vídeo e projetos futuros em uma única estrutura visual.',
-            'Os blocos vermelhos representam a série principal de jogos. Eles ficam sempre visíveis e não podem ser desativados. Os botões coloridos controlam camadas adicionais: spin-offs, livros, não ficção, quadrinhos, vídeos e projetos futuros.',
-            'Você pode trocar o idioma no painel superior. No desktop, o menu Visualização controla zoom, ajuste à tela e modos de navegação. No celular, as principais ações ficam embaixo: Como começar?, Filtros e Visualização.',
-            'Se o guia parecer grande demais, comece pelo botão “Como começar?”. Ele explica diferentes caminhos: experiência completa, ponto de entrada moderno ou escolha por época histórica favorita.',
-            'Para ocultar esta mensagem, toque em “Entendi” ou no botão ×. Ela não aparecerá automaticamente novamente neste dispositivo.'
-          ]
-        },
-        how: {
-          title: 'Dando um salto de fé…',
-          items: [
-            {
-              title: 'Imersão completa.',
-              text: 'Se você é novo na franquia e tem interesse em toda a série principal de jogos, basta seguir os blocos vermelhos do infográfico. Se quiser mais, inclua spin-offs e materiais em vídeo. Para mergulhar de vez no mundo de Assassin’s Creed, comece também pelos livros e quadrinhos.'
-            },
-            {
-              title: 'Sangue novo.',
-              text: 'Se você quer entrar na série, mas não quer voltar para 2007, pode pular a “era de ouro” da franquia e começar pelo soft reboot: Assassin’s Creed Origins. Alguns trechos do lore podem parecer confusos, mas você pode pesquisar quando precisar.'
-            },
-            {
-              title: 'Viagem pelas eras.',
-              text: 'Se você não se interessa pela história do presente, pelos Pedaços do Éden ou pelo lore mais profundo, escolha qualquer projeto dos blocos vermelhos. Curte piratas? Assassin’s Creed Black Flag está aí. Gosta da Londres vitoriana? Bem-vindo a Assassin’s Creed Syndicate. Terminou um jogo e gostou? Passe para os quadrinhos ou livros relacionados.'
-            }
-          ]
-        },
-        about: {
-          title: 'Sobre o projeto',
-          paragraphs: [
-            'Assassin’s Creed | RU é um projeto líder dedicado à icônica franquia Assassin’s Creed na Rússia e nos países da CEI. Nosso projeto está ativo desde 2011, ajudando a manter o interesse pela marca tanto entre fãs antigos quanto entre novos jogadores.',
-            'Ao longo dos anos, nosso portal manteve uma relação duradoura com a Ubisoft e apoiou ativamente a comunidade Assassin’s Creed por meio de várias iniciativas oficiais. Também participamos dos antigos programas Star Players e Mentors Guild da Ubisoft, o que nos permitiu contribuir mais de perto com a comunidade e representar os interesses de fãs dedicados.',
-            'Além de apoiar a Ubisoft, também tivemos a oportunidade de colaborar com empresas como 20th Century Fox e Tornado Energy.',
-            'Também participamos do desenvolvimento de jogos da série e da tradução da literatura de Assassin’s Creed para o russo.',
-            'Este guia foi criado exclusivamente para fins informativos.',
-            'Assassin’s Creed é uma marca registrada da Ubisoft.'
-          ]
-        }
-      },
-
-      de: {
-        title: 'Guide zum Assassin’s-Creed-Universum',
-        subtitle: 'Interaktiver Guide',
-        languageLabel: 'Sprache',
-        viewSettings: 'Ansicht',
-        zoomGroup: 'Maßstab',
-        zoomHelp: 'Vergrößert oder verkleinert den Guide.',
-        fitGroup: 'An Bildschirm anpassen',
-        fitHelp: 'Passe den Guide an die Breite, an die Höhe oder wieder an die normale Breitenansicht an.',
-        navigationGroup: 'Steuerungsmodus',
-        navigationHelp: 'Guide bewegen: Ziehe den Guide. Zoom durch Ziehen: Halten und nach rechts/oben bewegen zum Vergrößern, nach links/unten zum Verkleinern.',
-        contentFilters: 'Inhaltsfilter',
-        howButton: 'Wie anfangen?',
-        filtersButton: 'Filter',
-        aboutButton: 'Über das Projekt',
-        fitWidth: 'An Breite anpassen',
-        fitHeight: 'An Höhe anpassen',
-        resetView: 'Normale Ansicht',
-        panMode: 'Guide bewegen',
-        zoomMode: 'Zoom durch Ziehen',
-        mainFixed: 'Hauptspielreihe',
-        spinOffs: 'Spin-offs',
-        books: 'Bücher',
-        nonfiction: 'Sachbücher',
-        comics: 'Comics',
-        video: 'Video',
-        upcoming: 'Kommend',
-        resetFilters: 'Filter zurücksetzen',
-        share: 'Teilen',
-        hint: 'Ziehe den Guide, um dich zu bewegen. Nutze Ansicht für Zoom, Strg + Mausrad oder Pinch auf Mobilgeräten.',
-        copied: 'Link kopiert',
-        copyFallback: 'Diesen Link kopieren:',
-        switching: 'Der Sprachwechsel kann einige Sekunden dauern. Bitte warten...',
-        linkVk: 'VK',
-        linkTwitter: 'Twitter / X',
-        linkLinkedIn: 'LinkedIn des Autors',
-        welcome: {
-          title: 'Willkommen im Assassin’s-Creed-Universum-Guide',
-          close: 'Verstanden',
-          openHow: '„Wie anfangen?“ öffnen',
-          paragraphs: [
-            'Dies ist ein interaktiver, mehrschichtiger Guide zum Assassin’s-Creed-Universum. Er vereint Hauptspiele, Spin-offs, Bücher, Comics, Videoinhalte und kommende Projekte in einer visuellen Struktur.',
-            'Die roten Kacheln sind die Hauptspielreihe. Sie sind immer sichtbar und können nicht deaktiviert werden. Die farbigen Schaltflächen steuern zusätzliche Ebenen: Spin-offs, Bücher, Sachbücher, Comics, Videos und kommende Projekte.',
-            'Die Sprache lässt sich oben umstellen. Auf dem Desktop steuert das Menü Ansicht den Zoom, die Anpassung an den Bildschirm und Navigationsmodi. Auf Mobilgeräten befinden sich die wichtigsten Aktionen unten: Wie anfangen?, Filter und Ansicht.',
-            'Wenn der Guide zunächst zu umfangreich wirkt, beginne mit „Wie anfangen?“. Dort werden mehrere Wege erklärt: vollständiges Eintauchen, moderner Einstieg oder Auswahl nach bevorzugter historischer Epoche.',
-            'Um diese Begrüßung auszublenden, klicke auf „Verstanden“ oder auf ×. Sie erscheint auf diesem Gerät nicht erneut automatisch.'
-          ]
-        },
-        how: {
-          title: 'Wir wagen einen Sprung des Glaubens…',
-          items: [
-            {
-              title: 'Volles Eintauchen.',
-              text: 'Wenn du neu bist und dich die komplette Hauptspielreihe interessiert, folge einfach den roten Kacheln in der Infografik. Wenn du mehr möchtest, nimm Spin-offs und Videoinhalte dazu. Wenn du ganz in die Welt von Assassin’s Creed eintauchen willst, beginne auch mit den Büchern und Comics.'
-            },
-            {
-              title: 'Frisches Blut.',
-              text: 'Wenn du in die Reihe einsteigen willst, aber nicht bis 2007 zurückgehen möchtest, kannst du die “goldene Ära” der Franchise überspringen und mit dem Soft-Reboot Assassin’s Creed Origins beginnen. Einige Lore-Details können unklar wirken, lassen sich bei Bedarf aber nachschlagen.'
-            },
-            {
-              title: 'Reise durch die Epochen.',
-              text: 'Wenn dich die Gegenwartsstory, die Edensplitter oder tieferer Lore nicht interessieren, kannst du jedes Projekt aus den roten Kacheln starten. Piratenthema? Assassin’s Creed Black Flag steht bereit. Viktorianisches London? Willkommen bei Assassin’s Creed Syndicate. Spiel beendet und es hat dir gefallen? Dann wechsle zu den passenden Comics oder Büchern.'
-            }
-          ]
-        },
-        about: {
-          title: 'Über das Projekt',
-          paragraphs: [
-            'Assassin’s Creed | RU ist ein führendes Projekt zur ikonischen Assassin’s-Creed-Franchise in Russland und den GUS-Staaten. Unser Projekt ist seit 2011 aktiv und trägt dazu bei, das Interesse an der Marke sowohl bei langjährigen Fans als auch bei neuen Spielern aufrechtzuerhalten.',
-            'Im Laufe der Jahre hat unser Portal eine langjährige Beziehung zu Ubisoft aufgebaut und die Assassin’s-Creed-Community durch verschiedene offizielle Initiativen aktiv unterstützt. Wir waren außerdem Teilnehmer der früheren Ubisoft-Programme Star Players und Mentors Guild, wodurch wir enger zur Community beitragen und die Interessen engagierter Fans vertreten konnten.',
-            'Neben der Unterstützung von Ubisoft hatten wir auch die Gelegenheit, mit Unternehmen wie 20th Century Fox und Tornado Energy zusammenzuarbeiten.',
-            'Wir beteiligen uns außerdem an der Entwicklung von Spielen der Reihe und an der Übersetzung von Assassin’s-Creed-Literatur ins Russische.',
-            'Dieser Guide dient ausschließlich Informationszwecken.',
-            'Assassin’s Creed ist eine Marke von Ubisoft.'
-          ]
-        }
-      },
-
-      ja: {
-        title: 'アサシン クリード ユニバースガイド',
-        subtitle: 'インタラクティブガイド',
-        languageLabel: '言語',
-        viewSettings: '表示',
-        zoomGroup: '拡大縮小',
-        zoomHelp: 'ガイドを大きく、または小さく表示します。',
-        fitGroup: '画面に合わせる',
-        fitHelp: '幅や高さに合わせるか、標準の幅表示に戻します。',
-        navigationGroup: '操作モード',
-        navigationHelp: 'ガイドを移動：ドラッグして移動します。ドラッグズーム：押したまま右/上へ動かすと拡大、左/下へ動かすと縮小します。',
-        contentFilters: 'コンテンツフィルター',
-        howButton: '始め方',
-        filtersButton: 'フィルター',
-        aboutButton: 'プロジェクト概要',
-        fitWidth: '幅に合わせる',
-        fitHeight: '高さに合わせる',
-        resetView: '標準表示',
-        panMode: 'ガイドを移動',
-        zoomMode: 'ドラッグでズーム',
-        mainFixed: 'メインシリーズ',
-        spinOffs: 'スピンオフ',
-        books: '書籍',
-        nonfiction: 'ノンフィクション',
-        comics: 'コミック',
-        video: '映像',
-        upcoming: '今後の作品',
-        resetFilters: 'フィルターをリセット',
-        share: '共有',
-        hint: 'ガイドをドラッグして移動します。ズームは「表示」メニュー、Ctrl + ホイール、またはモバイルのピンチ操作で行えます。',
-        copied: 'リンクをコピーしました',
-        copyFallback: 'このリンクをコピーしてください：',
-        switching: '言語の切り替えには数秒かかる場合があります。しばらくお待ちください...',
-        linkVk: 'VK',
-        linkTwitter: 'Twitter / X',
-        linkLinkedIn: '作者の LinkedIn',
-        welcome: {
-          title: 'Assassin’s Creed ユニバースガイドへようこそ',
-          close: '了解',
-          openHow: '「始め方」を開く',
-          paragraphs: [
-            'これは Assassin’s Creed ユニバースを扱うインタラクティブなレイヤー式ガイドです。メインゲーム、スピンオフ、書籍、コミック、映像作品、今後の作品を一つの視覚構造にまとめています。',
-            '赤いタイルはメインゲームシリーズです。常に表示され、オフにはできません。色付きのボタンで、スピンオフ、書籍、ノンフィクション、コミック、映像、今後の作品といった追加レイヤーを切り替えられます。',
-            '上部パネルで言語を切り替えられます。デスクトップでは「表示」メニューからズーム、画面への合わせ込み、ナビゲーションモードを操作できます。スマートフォンでは、主な操作は下部の「始め方」「フィルター」「表示」にまとめています。',
-            'ガイドが大きすぎて分かりにくい場合は、まず「始め方」を開いてください。完全に追う方法、現代的な入口、好きな歴史時代から選ぶ方法を説明しています。',
-            'この案内を閉じるには「了解」または × を押してください。この端末では自動的に再表示されません。'
-          ]
-        },
-        how: {
-          title: '信仰の跳躍へ…',
-          items: [
-            {
-              title: '完全に浸る。',
-              text: 'シリーズ初心者でメインゲームをすべて追いたい場合は、インフォグラフィックの赤いタイルを順番に進めてください。もっと知りたい場合は、スピンオフや映像作品も加えましょう。Assassin’s Creed の世界に深く入り込みたいなら、書籍やコミックにも手を伸ばすのがおすすめです。'
-            },
-            {
-              title: '新しい入り口。',
-              text: 'シリーズに入りたいけれど2007年の作品まで戻りたくない場合は、フランチャイズの「黄金期」を飛ばして、ソフトリブート作品である Assassin’s Creed Origins から始めることもできます。一部の設定やロアは分かりにくいかもしれませんが、必要に応じて調べれば問題ありません。'
-            },
-            {
-              title: '時代を巡る旅。',
-              text: '現代編、エデンの果実、深いロアに興味がないなら、赤いタイルの中から好きな作品を選んで構いません。海賊が好きなら Assassin’s Creed Black Flag。ヴィクトリア朝ロンドンが好きなら Assassin’s Creed Syndicate。遊んで気に入ったら、関連するコミックや書籍へ進みましょう。'
-            }
-          ]
-        },
-        about: {
-          title: 'プロジェクトについて',
-          paragraphs: [
-            'Assassin’s Creed | RU は、ロシアおよびCIS諸国における Assassin’s Creed フランチャイズ専門の主要プロジェクトです。2011年から活動しており、長年のファンと新規プレイヤーの双方に向けてブランドへの関心を維持してきました。',
-            '長年にわたり、私たちのポータルは Ubisoft と継続的な関係を築き、さまざまな公式施策を通じて Assassin’s Creed コミュニティを支援してきました。また、かつての Ubisoft Star Players および Mentors Guild プログラムにも参加し、コミュニティへの貢献と熱心なファンの関心の代弁をより密接に行うことができました。',
-            'Ubisoft の支援に加え、20th Century Fox や Tornado Energy などの企業とも協力する機会がありました。',
-            'また、シリーズ作品の開発や Assassin’s Creed 関連書籍のロシア語翻訳にも参加しています。',
-            'このガイドは情報提供のみを目的として作成されています。',
-            'Assassin’s Creed は Ubisoft の商標です。'
-          ]
-        }
-      },
-
-      ko: {
-        title: 'Assassin’s Creed 세계관 가이드',
-        subtitle: '인터랙티브 가이드',
-        languageLabel: '언어',
-        viewSettings: '보기',
-        zoomGroup: '크기 조절',
-        zoomHelp: '가이드를 더 크게 또는 더 작게 표시합니다.',
-        fitGroup: '화면에 맞추기',
-        fitHelp: '가이드를 너비나 높이에 맞추거나 기본 너비 보기로 되돌립니다.',
-        navigationGroup: '조작 모드',
-        navigationHelp: '가이드 이동: 가이드를 드래그하세요. 드래그 확대: 누른 채 오른쪽/위로 움직이면 확대, 왼쪽/아래로 움직이면 축소됩니다.',
-        contentFilters: '콘텐츠 필터',
-        howButton: '어떻게 시작?',
-        filtersButton: '필터',
-        aboutButton: '프로젝트 소개',
-        fitWidth: '너비에 맞춤',
-        fitHeight: '높이에 맞춤',
-        resetView: '기본 보기',
-        panMode: '가이드 이동',
-        zoomMode: '드래그로 확대',
-        mainFixed: '메인 시리즈',
-        spinOffs: '스핀오프',
-        books: '도서',
-        nonfiction: '논픽션',
-        comics: '코믹스',
-        video: '영상',
-        upcoming: '예정작',
-        resetFilters: '필터 초기화',
-        share: '공유',
-        hint: '가이드를 드래그해 이동하세요. 확대는 보기 메뉴, Ctrl + 휠 또는 모바일 핀치 제스처를 사용하세요.',
-        copied: '링크가 복사되었습니다',
-        copyFallback: '이 링크를 복사하세요:',
-        switching: '언어 전환에 몇 초 정도 걸릴 수 있습니다. 잠시만 기다려 주세요...',
-        linkVk: 'VK',
-        linkTwitter: 'Twitter / X',
-        linkLinkedIn: '작성자 LinkedIn',
-        welcome: {
-          title: 'Assassin’s Creed 세계관 가이드에 오신 것을 환영합니다',
-          close: '확인',
-          openHow: '“어떻게 시작?” 열기',
-          paragraphs: [
-            '이 가이드는 Assassin’s Creed 세계관을 위한 인터랙티브 레이어형 가이드입니다. 메인 게임, 스핀오프, 도서, 코믹스, 영상 콘텐츠, 예정작을 하나의 시각적 구조로 정리합니다.',
-            '빨간 타일은 메인 게임 시리즈입니다. 항상 표시되며 끌 수 없습니다. 색상 버튼은 스핀오프, 도서, 논픽션, 코믹스, 영상, 예정작 같은 추가 레이어를 제어합니다.',
-            '상단 패널에서 언어를 바꿀 수 있습니다. 데스크톱에서는 보기 메뉴로 확대, 화면 맞춤, 탐색 모드를 조정합니다. 모바일에서는 주요 동작이 하단의 “어떻게 시작?”, “필터”, “보기”에 배치되어 있습니다.',
-            '가이드가 너무 방대하게 느껴진다면 “어떻게 시작?” 버튼부터 확인하세요. 전체 몰입, 현대적인 입문 지점, 좋아하는 역사 시대를 기준으로 고르는 방법을 설명합니다.',
-            '이 안내를 숨기려면 “확인” 또는 × 버튼을 누르세요. 이 기기에서는 다시 자동으로 표시되지 않습니다.'
-          ]
-        },
-        how: {
-          title: '신뢰의 도약을 해봅시다…',
-          items: [
-            {
-              title: '완전 몰입.',
-              text: '처음 접하는 사람이고 메인 게임 시리즈 전체가 궁금하다면, 인포그래픽의 빨간 타일을 따라가면 됩니다. 더 깊게 보고 싶다면 스핀오프와 영상 콘텐츠를 추가하세요. Assassin’s Creed 세계에 완전히 빠져들고 싶다면 책과 코믹스도 함께 살펴보는 것이 좋습니다.'
-            },
-            {
-              title: '새로운 입문자.',
-              text: '시리즈에 입문하고 싶지만 2007년 작품까지 돌아가고 싶지 않다면, 프랜차이즈의 “황금기”를 건너뛰고 소프트 리부트인 Assassin’s Creed Origins부터 시작할 수 있습니다. 일부 설정이나 로어가 낯설 수 있지만, 필요할 때 찾아보면 됩니다.'
-            },
-            {
-              title: '시대를 넘나드는 여행.',
-              text: '현대 파트, 에덴의 조각, 깊은 로어에 관심이 없다면 빨간 타일의 작품 중 아무거나 시작해도 됩니다. 해적물이 좋다면 Assassin’s Creed Black Flag가 있습니다. 빅토리아 시대 런던이 끌린다면 Assassin’s Creed Syndicate로 가면 됩니다. 게임을 끝내고 마음에 들었다면 관련 코믹스나 책으로 넘어가세요.'
-            }
-          ]
-        },
-        about: {
-          title: '프로젝트 소개',
-          paragraphs: [
-            'Assassin’s Creed | RU는 러시아와 CIS 국가에서 상징적인 Assassin’s Creed 프랜차이즈를 다루는 대표적인 프로젝트입니다. 이 프로젝트는 2011년부터 활동하며 오랜 팬과 신규 플레이어 모두가 브랜드에 대한 관심을 이어가도록 돕고 있습니다.',
-            '수년 동안 저희 포털은 Ubisoft와 장기적인 관계를 유지해 왔으며, 다양한 공식 활동을 통해 Assassin’s Creed 커뮤니티를 적극적으로 지원했습니다. 또한 Ubisoft의 과거 Star Players 및 Mentors Guild 프로그램에 참여하여 커뮤니티에 더 가까이 기여하고 헌신적인 팬들의 관심을 대표할 수 있었습니다.',
-            'Ubisoft를 지원하는 것 외에도 20th Century Fox, Tornado Energy와 같은 기업들과 협력할 기회도 있었습니다.',
-            '또한 시리즈 게임 개발과 Assassin’s Creed 문학 작품의 러시아어 번역에도 참여하고 있습니다.',
-            '이 가이드는 정보 제공만을 목적으로 제작되었습니다.',
-            'Assassin’s Creed는 Ubisoft의 상표입니다.'
-          ]
-        }
-      },
-
-      it: {
-        title: 'Guida all’universo di Assassin’s Creed',
-        subtitle: 'Guida interattiva',
-        languageLabel: 'Lingua',
-        viewSettings: 'Vista',
-        zoomGroup: 'Scala',
-        zoomHelp: 'Aumenta o riduce le dimensioni della guida.',
-        fitGroup: 'Adatta allo schermo',
-        fitHelp: 'Adatta la guida alla larghezza, all’altezza o torna alla vista normale in larghezza.',
-        navigationGroup: 'Modalità di controllo',
-        navigationHelp: 'Sposta guida: trascina la guida. Zoom trascinando: tieni premuto e muovi a destra/in alto per avvicinare, a sinistra/in basso per allontanare.',
-        contentFilters: 'Filtri contenuto',
-        howButton: 'Da dove iniziare?',
-        filtersButton: 'Filtri',
-        aboutButton: 'Info sul progetto',
-        fitWidth: 'Adatta alla larghezza',
-        fitHeight: 'Adatta all’altezza',
-        resetView: 'Vista normale',
-        panMode: 'Sposta guida',
-        zoomMode: 'Zoom trascinando',
-        mainFixed: 'Serie principale',
-        spinOffs: 'Spin-off',
-        books: 'Libri',
-        nonfiction: 'Saggistica',
-        comics: 'Fumetti',
-        video: 'Video',
-        upcoming: 'In arrivo',
-        resetFilters: 'Reimposta filtri',
-        share: 'Condividi',
-        hint: 'Trascina la guida per muoverti. Usa Vista per lo zoom, Ctrl + rotellina o pinch su mobile.',
-        copied: 'Link copiato',
-        copyFallback: 'Copia questo link:',
-        switching: 'Il cambio della lingua può richiedere alcuni secondi. Attendi...',
-        linkVk: 'VK',
-        linkTwitter: 'Twitter / X',
-        linkLinkedIn: 'LinkedIn dell’autore',
-        welcome: {
-          title: 'Benvenuto nella guida all’universo di Assassin’s Creed',
-          close: 'Capito',
-          openHow: 'Apri “Da dove iniziare?”',
-          paragraphs: [
-            'Questa è una guida interattiva a livelli dedicata all’universo di Assassin’s Creed. Riunisce serie principale, spin-off, libri, fumetti, materiali video e progetti futuri in un’unica struttura visiva.',
-            'Le tessere rosse rappresentano la serie principale di giochi. Sono sempre visibili e non possono essere disattivate. I pulsanti colorati controllano i livelli aggiuntivi: spin-off, libri, saggistica, fumetti, video e progetti futuri.',
-            'Puoi cambiare lingua dal pannello superiore. Su desktop il menu Vista gestisce zoom, adattamento allo schermo e modalità di navigazione. Su mobile le azioni principali sono in basso: Da dove iniziare?, Filtri e Vista.',
-            'Se la guida sembra troppo grande, inizia dal pulsante “Da dove iniziare?”. Spiega diversi percorsi: esperienza completa, punto d’ingresso moderno o scelta in base all’epoca storica preferita.',
-            'Per nascondere questo messaggio, premi “Capito” o il pulsante ×. Non apparirà più automaticamente su questo dispositivo.'
-          ]
-        },
-        how: {
-          title: 'Facciamo un salto della fede…',
-          items: [
-            {
-              title: 'Immersione completa.',
-              text: 'Se sei nuovo e ti interessa tutta la serie principale di giochi, segui semplicemente le tessere rosse dell’infografica. Se vuoi di più, aggiungi spin-off e materiali video. Se vuoi immergerti del tutto nel mondo di Assassin’s Creed, inizia anche libri e fumetti.'
-            },
-            {
-              title: 'Sangue fresco.',
-              text: 'Se vuoi entrare nella serie ma non ti va di tornare al 2007, puoi saltare “l’era d’oro” del franchise e iniziare dal soft reboot: Assassin’s Creed Origins. Alcuni elementi di lore potrebbero sembrare poco chiari, ma puoi sempre recuperarli quando serve.'
-            },
-            {
-              title: 'Viaggio tra le epoche.',
-              text: 'Se non ti interessano la trama moderna, i Frutti dell’Eden o il lore più profondo, avvia pure qualunque progetto dalle tessere rosse. Ti piacciono i pirati? Assassin’s Creed Black Flag è a tua disposizione. Ti affascina la Londra vittoriana? Benvenuto in Assassin’s Creed Syndicate. Finito un gioco e ti è piaciuto? Passa ai fumetti o ai libri collegati.'
-            }
-          ]
-        },
-        about: {
-          title: 'Informazioni sul progetto',
-          paragraphs: [
-            'Assassin’s Creed | RU è un progetto leader dedicato all’iconico franchise Assassin’s Creed in Russia e nei paesi della CSI. Il nostro progetto è attivo dal 2011 e contribuisce a mantenere vivo l’interesse per il brand sia tra i fan storici sia tra i nuovi giocatori.',
-            'Nel corso degli anni, il nostro portale ha mantenuto un rapporto duraturo con Ubisoft e ha sostenuto attivamente la community di Assassin’s Creed attraverso diverse iniziative ufficiali. Siamo stati anche partecipanti ai precedenti programmi Ubisoft Star Players e Mentors Guild, che ci hanno permesso di contribuire più da vicino alla community e rappresentare gli interessi dei fan più dedicati.',
-            'Oltre a supportare Ubisoft, abbiamo avuto anche l’opportunità di collaborare con aziende come 20th Century Fox e Tornado Energy.',
-            'Partecipiamo inoltre allo sviluppo di giochi della serie e alla traduzione in russo della letteratura di Assassin’s Creed.',
-            'Questa guida è realizzata esclusivamente a scopo informativo.',
-            'Assassin’s Creed è un marchio di Ubisoft.'
-          ]
-        }
-      },
-
-      pl: {
-        title: 'Przewodnik po uniwersum Assassin’s Creed',
-        subtitle: 'Interaktywny przewodnik',
-        languageLabel: 'Język',
-        viewSettings: 'Widok',
-        zoomGroup: 'Skala',
-        zoomHelp: 'Powiększa lub zmniejsza przewodnik.',
-        fitGroup: 'Dopasowanie do ekranu',
-        fitHelp: 'Dopasuj przewodnik do szerokości, wysokości albo wróć do normalnego widoku po szerokości.',
-        navigationGroup: 'Tryb sterowania',
-        navigationHelp: 'Przesuwanie przewodnika: przeciągaj przewodnik. Zoom przez przeciąganie: przytrzymaj i przesuń w prawo/górę, aby przybliżyć, w lewo/dół, aby oddalić.',
-        contentFilters: 'Filtry treści',
-        howButton: 'Jak zacząć?',
-        filtersButton: 'Filtry',
-        aboutButton: 'O projekcie',
-        fitWidth: 'Dopasuj do szerokości',
-        fitHeight: 'Dopasuj do wysokości',
-        resetView: 'Normalny widok',
-        panMode: 'Przesuwaj przewodnik',
-        zoomMode: 'Zoom przez przeciąganie',
-        mainFixed: 'Główna seria',
-        spinOffs: 'Spin-offy',
-        books: 'Książki',
-        nonfiction: 'Literatura faktu',
-        comics: 'Komiksy',
-        video: 'Wideo',
-        upcoming: 'Nadchodzące',
-        resetFilters: 'Resetuj filtry',
-        share: 'Udostępnij',
-        hint: 'Przeciągaj przewodnik, aby się poruszać. Zoom znajdziesz w Widoku, działa też Ctrl + kółko lub gest szczypania na telefonie.',
-        copied: 'Link skopiowany',
-        copyFallback: 'Skopiuj ten link:',
-        switching: 'Zmiana języka może potrwać kilka sekund. Proszę czekać...',
-        linkVk: 'VK',
-        linkTwitter: 'Twitter / X',
-        linkLinkedIn: 'LinkedIn autora',
-        welcome: {
-          title: 'Witamy w przewodniku po uniwersum Assassin’s Creed',
-          close: 'Rozumiem',
-          openHow: 'Otwórz „Jak zacząć?”',
-          paragraphs: [
-            'To interaktywny, warstwowy przewodnik po uniwersum Assassin’s Creed. Łączy główną serię gier, spin-offy, książki, komiksy, materiały wideo i przyszłe projekty w jednej strukturze wizualnej.',
-            'Czerwone kafelki oznaczają główną serię gier. Są zawsze widoczne i nie można ich wyłączyć. Kolorowe przyciski sterują dodatkowymi warstwami: spin-offami, książkami, literaturą faktu, komiksami, wideo i przyszłymi projektami.',
-            'Język można zmienić w górnym panelu. Na komputerze menu Widok odpowiada za zoom, dopasowanie do ekranu i tryby nawigacji. Na telefonie najważniejsze akcje znajdują się na dole: Jak zacząć?, Filtry i Widok.',
-            'Jeśli przewodnik wydaje się zbyt obszerny, zacznij od przycisku „Jak zacząć?”. Wyjaśnia on kilka ścieżek: pełne zanurzenie, nowoczesny punkt wejścia lub wybór według ulubionej epoki historycznej.',
-            'Aby ukryć ten komunikat, naciśnij „Rozumiem” lub przycisk ×. Nie pojawi się ponownie automatycznie na tym urządzeniu.'
-          ]
-        },
-        how: {
-          title: 'Wykonujemy skok wiary…',
-          items: [
-            {
-              title: 'Pełne zanurzenie.',
-              text: 'Jeśli dopiero zaczynasz i interesuje cię cała główna seria gier, po prostu podążaj za czerwonymi kafelkami w infografice. Jeśli chcesz więcej, dodaj spin-offy i materiały wideo. Jeśli chcesz naprawdę wejść w świat Assassin’s Creed, sięgnij także po książki i komiksy.'
-            },
-            {
-              title: 'Świeża krew.',
-              text: 'Jeśli chcesz wejść w serię, ale nie masz ochoty wracać do 2007 roku, możesz pominąć “złotą erę” franczyzy i zacząć od miękkiego rebootu, czyli Assassin’s Creed Origins. Część lore może wydawać się niejasna, ale w razie potrzeby można ją łatwo sprawdzić.'
-            },
-            {
-              title: 'Podróż przez epoki.',
-              text: 'Jeśli nie interesuje cię współczesny wątek, Fragmenty Edenu ani głębsze lore, śmiało wybierz dowolny projekt z czerwonych kafelków. Lubisz pirackie klimaty? Assassin’s Creed Black Flag czeka. Wolisz wiktoriański Londyn? Witaj w Assassin’s Creed Syndicate. Gra ukończona i przypadła ci do gustu? Przejdź do powiązanych komiksów lub książek.'
-            }
-          ]
-        },
-        about: {
-          title: 'O projekcie',
-          paragraphs: [
-            'Assassin’s Creed | RU to wiodący projekt poświęcony kultowej franczyzie Assassin’s Creed w Rosji i krajach WNP. Projekt działa od 2011 roku, pomagając utrzymywać zainteresowanie marką zarówno wśród długoletnich fanów, jak i nowych graczy.',
-            'Przez lata nasz portal utrzymywał długotrwałe relacje z Ubisoftem i aktywnie wspierał społeczność Assassin’s Creed poprzez różne oficjalne inicjatywy. Byliśmy również uczestnikami dawnych programów Ubisoft Star Players i Mentors Guild, co pozwalało nam bliżej współtworzyć społeczność i reprezentować interesy oddanych fanów.',
-            'Oprócz wspierania Ubisoftu mieliśmy także okazję współpracować z takimi firmami jak 20th Century Fox i Tornado Energy.',
-            'Bierzemy również udział w tworzeniu gier z serii oraz w tłumaczeniu literatury Assassin’s Creed na język rosyjski.',
-            'Ten przewodnik powstał wyłącznie w celach informacyjnych.',
-            'Assassin’s Creed jest znakiem towarowym Ubisoft.'
-          ]
-        }
-      },
-
-      tr: {
-        title: 'Assassin’s Creed evren rehberi',
-        subtitle: 'İnteraktif rehber',
-        languageLabel: 'Dil',
-        viewSettings: 'Görünüm',
-        zoomGroup: 'Ölçek',
-        zoomHelp: 'Rehberi büyütür veya küçültür.',
-        fitGroup: 'Ekrana sığdır',
-        fitHelp: 'Rehberi genişliğe, yüksekliğe sığdırabilir veya normal genişlik görünümüne dönebilirsin.',
-        navigationGroup: 'Kontrol modu',
-        navigationHelp: 'Rehberi taşı: rehberi sürükle. Sürükleyerek yakınlaştır: basılı tutup sağa/yukarı hareket ettirerek yakınlaştır, sola/aşağı hareket ettirerek uzaklaştır.',
-        contentFilters: 'İçerik filtreleri',
-        howButton: 'Nasıl başlanır?',
-        filtersButton: 'Filtreler',
-        aboutButton: 'Proje hakkında',
-        fitWidth: 'Genişliğe sığdır',
-        fitHeight: 'Yüksekliğe sığdır',
-        resetView: 'Normal görünüm',
-        panMode: 'Rehberi taşı',
-        zoomMode: 'Sürükleyerek yakınlaştır',
-        mainFixed: 'Ana seri',
-        spinOffs: 'Yan oyunlar',
-        books: 'Kitaplar',
-        nonfiction: 'Kurgu dışı',
-        comics: 'Çizgi romanlar',
-        video: 'Video',
-        upcoming: 'Yakında',
-        resetFilters: 'Filtreleri sıfırla',
-        share: 'Paylaş',
-        hint: 'Gezinmek için rehberi sürükle. Yakınlaştırma için Görünüm menüsünü, Ctrl + tekerleği veya mobilde kıstırma hareketini kullan.',
-        copied: 'Bağlantı kopyalandı',
-        copyFallback: 'Bu bağlantıyı kopyala:',
-        switching: 'Dil değiştirme birkaç saniye sürebilir. Lütfen bekleyin...',
-        linkVk: 'VK',
-        linkTwitter: 'Twitter / X',
-        linkLinkedIn: 'Yazar LinkedIn',
-        welcome: {
-          title: 'Assassin’s Creed evren rehberine hoş geldin',
-          close: 'Anladım',
-          openHow: '“Nasıl başlanır?” aç',
-          paragraphs: [
-            'Bu, Assassin’s Creed evreni için hazırlanmış katmanlı ve interaktif bir rehberdir. Ana oyun serisini, yan oyunları, kitapları, çizgi romanları, video içeriklerini ve yaklaşan projeleri tek bir görsel yapıda toplar.',
-            'Kırmızı kutular ana oyun serisini gösterir. Her zaman görünürler ve kapatılamazlar. Renkli düğmeler ek katmanları kontrol eder: yan oyunlar, kitaplar, kurgu dışı içerikler, çizgi romanlar, videolar ve gelecek projeler.',
-            'Üst panelden dili değiştirebilirsin. Masaüstünde Görünüm menüsü yakınlaştırma, ekrana sığdırma ve gezinme modlarını yönetir. Mobilde ana işlemler alttadır: Nasıl başlanır?, Filtreler ve Görünüm.',
-            'Rehber ilk bakışta fazla büyük görünüyorsa “Nasıl başlanır?” düğmesiyle başla. Orada tam deneyim, modern giriş noktası veya sevdiğin tarihî döneme göre seçim gibi birkaç yol açıklanır.',
-            'Bu karşılama mesajını gizlemek için “Anladım” veya × düğmesine bas. Bu cihazda otomatik olarak tekrar görünmez.'
-          ]
-        },
-        how: {
-          title: 'Bir inanç sıçrayışı yapıyoruz…',
-          items: [
-            {
-              title: 'Tam dalış.',
-              text: 'Seriye yeni başladıysan ve ana oyun serisinin tamamı ilgini çekiyorsa, infografikteki kırmızı kutuları takip etmen yeterli. Daha fazlasını istiyorsan yan oyunları ve video içeriklerini de ekleyebilirsin. Assassin’s Creed dünyasına tamamen dalmak istiyorsan kitaplara ve çizgi romanlara da başlayabilirsin.'
-            },
-            {
-              title: 'Taze kan.',
-              text: 'Seriye girmek istiyor ama 2007’ye dönmek istemiyorsan, serinin “altın çağını” atlayıp soft reboot olan Assassin’s Creed Origins ile başlayabilirsin. Elbette bazı lore parçaları anlaşılmaz gelebilir, ama gerektiğinde bunları internette kontrol edebilirsin.'
-            },
-            {
-              title: 'Çağlar arasında yolculuk.',
-              text: 'Oyunlardaki modern dönem, Eden Parçaları veya derin lore ilgini çekmiyorsa, kırmızı kutulardaki herhangi bir projeyi rahatça açabilirsin. Korsan temasını seviyorsan Assassin’s Creed Black Flag seni bekliyor. Viktorya dönemi Londra’sı hoşuna gidiyorsa Assassin’s Creed Syndicate’e hoş geldin. Oyunu bitirdin ve beğendin mi? İlgili çizgi romanlara veya kitaplara geçebilirsin.'
-            }
-          ]
-        },
-        about: {
-          title: 'Proje hakkında',
-          paragraphs: [
-            'Assassin’s Creed | RU, Rusya ve BDT ülkelerinde ikonik Assassin’s Creed serisine adanmış önde gelen bir projedir. Projemiz 2011’den beri aktif olup hem uzun süredir seriyi takip eden hayranlar hem de yeni oyuncular arasında markaya olan ilgiyi canlı tutmaya yardımcı olur.',
-            'Yıllar içinde portalımız Ubisoft ile uzun süreli bir ilişki sürdürmüş ve çeşitli resmi girişimler aracılığıyla Assassin’s Creed topluluğunu aktif olarak desteklemiştir. Ayrıca Ubisoft’un eski Star Players ve Mentors Guild programlarına katıldık; bu da topluluğa daha yakından katkı sağlamamıza ve sadık hayranların çıkarlarını temsil etmemize olanak tanıdı.',
-            'Ubisoft’u desteklemenin yanı sıra 20th Century Fox ve Tornado Energy gibi şirketlerle iş birliği yapma fırsatımız da oldu.',
-            'Ayrıca serideki oyunların geliştirilmesine ve Assassin’s Creed edebiyatının Rusçaya çevrilmesine katkıda bulunuyoruz.',
-            'Bu rehber yalnızca bilgilendirme amacıyla hazırlanmıştır.',
-            'Assassin’s Creed, Ubisoft’un ticari markasıdır.'
-          ]
-        }
       }
     };
 
+    UI['zh-CN'] = {
+      ...UI.en,
+      title: '刺客信条宇宙指南',
+      subtitle: '交互式指南',
+      languageLabel: '语言',
+      viewSettings: '视图',
+      zoomGroup: '缩放',
+      zoomHelp: '放大或缩小指南。',
+      fitGroup: '适应屏幕',
+      fitHelp: '按宽度或高度适配指南，或返回默认宽度视图。',
+      navigationGroup: '控制模式',
+      navigationHelp: '移动指南：拖动指南。拖动缩放：按住并向右/上移动放大，向左/下移动缩小。',
+      showHint: '显示操作提示',
+      contentFilters: '内容筛选',
+      howButton: '如何开始？',
+      filtersButton: '筛选',
+      aboutButton: '关于项目',
+      fitWidth: '适应宽度',
+      fitHeight: '适应高度',
+      resetView: '默认视图',
+      panMode: '移动指南',
+      zoomMode: '拖动缩放',
+      mainFixed: '主系列',
+      spinOffs: '衍生游戏',
+      books: '书籍',
+      nonfiction: '非虚构',
+      comics: '漫画',
+      video: '视频',
+      upcoming: '即将推出',
+      resetFilters: '重置筛选',
+      share: '分享',
+      hint: '拖动指南即可移动。缩放可使用“视图”菜单、Ctrl + 滚轮，或在手机上双指缩放。',
+      copied: '链接已复制',
+      copyFallback: '复制此链接：',
+      switching: '切换语言可能需要几秒钟。请稍候...'
+    };
+
+    UI.es = {
+      ...UI.en,
+      title: 'Guía del universo de Assassin’s Creed',
+      subtitle: 'Guía interactiva',
+      languageLabel: 'Idioma',
+      viewSettings: 'Vista',
+      zoomGroup: 'Escala',
+      zoomHelp: 'Aumenta o reduce el tamaño de la guía.',
+      fitGroup: 'Ajuste en pantalla',
+      fitHelp: 'Ajusta la guía al ancho, a la altura o vuelve a la vista normal por ancho.',
+      navigationGroup: 'Modo de control',
+      navigationHelp: 'Mover guía: arrastra la guía. Zoom al arrastrar: mantén pulsado y mueve a la derecha/arriba para acercar, a la izquierda/abajo para alejar.',
+      showHint: 'Mostrar ayuda de navegación',
+      contentFilters: 'Filtros de contenido',
+      howButton: '¿Cómo empezar?',
+      filtersButton: 'Filtros',
+      aboutButton: 'Acerca de',
+      fitWidth: 'Ajustar al ancho',
+      fitHeight: 'Ajustar a la altura',
+      resetView: 'Vista normal',
+      panMode: 'Mover guía',
+      zoomMode: 'Zoom al arrastrar',
+      mainFixed: 'Serie principal',
+      spinOffs: 'Spin-offs',
+      books: 'Libros',
+      nonfiction: 'No ficción',
+      comics: 'Cómics',
+      video: 'Video',
+      upcoming: 'Próximos',
+      resetFilters: 'Restablecer filtros',
+      share: 'Compartir',
+      hint: 'Arrastra la guía para moverte. Usa Vista para el zoom, Ctrl + rueda o pellizcar en móvil.',
+      copied: 'Enlace copiado',
+      copyFallback: 'Copia este enlace:',
+      switching: 'Cambiar el idioma puede tardar unos segundos. Por favor, espera...'
+    };
+
+    UI.fr = {
+      ...UI.en,
+      title: 'Guide de l’univers Assassin’s Creed',
+      subtitle: 'Guide interactif',
+      languageLabel: 'Langue',
+      viewSettings: 'Affichage',
+      zoomGroup: 'Échelle',
+      zoomHelp: 'Agrandit ou réduit le guide.',
+      fitGroup: 'Ajustement à l’écran',
+      fitHelp: 'Ajustez le guide à la largeur, à la hauteur, ou revenez à la vue normale en largeur.',
+      navigationGroup: 'Mode de contrôle',
+      navigationHelp: 'Déplacer le guide : faites glisser le guide. Zoom par glissement : maintenez et déplacez vers la droite/haut pour zoomer, vers la gauche/bas pour dézoomer.',
+      showHint: 'Afficher l’aide de navigation',
+      contentFilters: 'Filtres de contenu',
+      howButton: 'Comment commencer ?',
+      filtersButton: 'Filtres',
+      aboutButton: 'À propos',
+      fitWidth: 'Adapter à la largeur',
+      fitHeight: 'Adapter à la hauteur',
+      resetView: 'Vue normale',
+      panMode: 'Déplacer le guide',
+      zoomMode: 'Zoom par glissement',
+      mainFixed: 'Série principale',
+      spinOffs: 'Jeux dérivés',
+      books: 'Livres',
+      nonfiction: 'Documentaire',
+      comics: 'BD',
+      video: 'Vidéo',
+      upcoming: 'À venir',
+      resetFilters: 'Réinitialiser les filtres',
+      share: 'Partager',
+      hint: 'Faites glisser le guide pour vous déplacer. Utilisez Affichage pour le zoom, Ctrl + molette ou le pincement sur mobile.',
+      copied: 'Lien copié',
+      copyFallback: 'Copiez ce lien :',
+      switching: 'Le changement de langue peut prendre quelques secondes. Veuillez patienter...'
+    };
+
+    UI['pt-BR'] = {
+      ...UI.en,
+      title: 'Guia do universo de Assassin’s Creed',
+      subtitle: 'Guia interativo',
+      languageLabel: 'Idioma',
+      viewSettings: 'Visualização',
+      zoomGroup: 'Escala',
+      zoomHelp: 'Aumenta ou reduz o tamanho do guia.',
+      fitGroup: 'Ajuste na tela',
+      fitHelp: 'Ajuste o guia à largura, à altura ou volte para a visualização normal por largura.',
+      navigationGroup: 'Modo de controle',
+      navigationHelp: 'Mover guia: arraste o guia. Zoom ao arrastar: segure e mova para a direita/cima para aproximar, para a esquerda/baixo para afastar.',
+      showHint: 'Mostrar dica de navegação',
+      contentFilters: 'Filtros de conteúdo',
+      howButton: 'Como começar?',
+      filtersButton: 'Filtros',
+      aboutButton: 'Sobre',
+      fitWidth: 'Ajustar à largura',
+      fitHeight: 'Ajustar à altura',
+      resetView: 'Visualização normal',
+      panMode: 'Mover guia',
+      zoomMode: 'Zoom ao arrastar',
+      mainFixed: 'Série principal',
+      spinOffs: 'Jogos derivados',
+      books: 'Livros',
+      nonfiction: 'Não ficção',
+      comics: 'Quadrinhos',
+      video: 'Vídeo',
+      upcoming: 'Futuros',
+      resetFilters: 'Redefinir filtros',
+      share: 'Compartilhar',
+      hint: 'Arraste o guia para se mover. Use Visualização para zoom, Ctrl + roda ou gesto de pinça no celular.',
+      copied: 'Link copiado',
+      copyFallback: 'Copie este link:',
+      switching: 'A troca de idioma pode levar alguns segundos. Aguarde...'
+    };
+
+    UI.de = {
+      ...UI.en,
+      title: 'Guide zum Assassin’s-Creed-Universum',
+      subtitle: 'Interaktiver Guide',
+      languageLabel: 'Sprache',
+      viewSettings: 'Ansicht',
+      zoomGroup: 'Maßstab',
+      zoomHelp: 'Vergrößert oder verkleinert den Guide.',
+      fitGroup: 'An Bildschirm anpassen',
+      fitHelp: 'Passe den Guide an die Breite, an die Höhe oder wieder an die normale Breitenansicht an.',
+      navigationGroup: 'Steuerungsmodus',
+      navigationHelp: 'Guide bewegen: Ziehe den Guide. Zoom durch Ziehen: Halten und nach rechts/oben bewegen zum Vergrößern, nach links/unten zum Verkleinern.',
+      showHint: 'Navigationshinweis anzeigen',
+      contentFilters: 'Inhaltsfilter',
+      howButton: 'Wie anfangen?',
+      filtersButton: 'Filter',
+      aboutButton: 'Über',
+      fitWidth: 'An Breite anpassen',
+      fitHeight: 'An Höhe anpassen',
+      resetView: 'Normale Ansicht',
+      panMode: 'Guide bewegen',
+      zoomMode: 'Zoom durch Ziehen',
+      mainFixed: 'Hauptspielreihe',
+      spinOffs: 'Spin-offs',
+      books: 'Bücher',
+      nonfiction: 'Sachbücher',
+      comics: 'Comics',
+      video: 'Video',
+      upcoming: 'Kommend',
+      resetFilters: 'Filter zurücksetzen',
+      share: 'Teilen',
+      hint: 'Ziehe den Guide, um dich zu bewegen. Nutze Ansicht für Zoom, Strg + Mausrad oder Pinch auf Mobilgeräten.',
+      copied: 'Link kopiert',
+      copyFallback: 'Diesen Link kopieren:',
+      switching: 'Der Sprachwechsel kann einige Sekunden dauern. Bitte warten...'
+    };
+
+    UI.it = {
+      ...UI.en,
+      title: 'Guida all’universo di Assassin’s Creed',
+      subtitle: 'Guida interattiva',
+      languageLabel: 'Lingua',
+      viewSettings: 'Vista',
+      zoomGroup: 'Scala',
+      zoomHelp: 'Aumenta o riduce le dimensioni della guida.',
+      fitGroup: 'Adatta allo schermo',
+      fitHelp: 'Adatta la guida alla larghezza, all’altezza o torna alla vista normale in larghezza.',
+      navigationGroup: 'Modalità di controllo',
+      navigationHelp: 'Sposta guida: trascina la guida. Zoom trascinando: tieni premuto e muovi a destra/in alto per avvicinare, a sinistra/in basso per allontanare.',
+      showHint: 'Mostra suggerimento di navigazione',
+      contentFilters: 'Filtri contenuto',
+      howButton: 'Da dove iniziare?',
+      filtersButton: 'Filtri',
+      aboutButton: 'Info',
+      fitWidth: 'Adatta alla larghezza',
+      fitHeight: 'Adatta all’altezza',
+      resetView: 'Vista normale',
+      panMode: 'Sposta guida',
+      zoomMode: 'Zoom trascinando',
+      mainFixed: 'Serie principale',
+      spinOffs: 'Spin-off',
+      books: 'Libri',
+      nonfiction: 'Saggistica',
+      comics: 'Fumetti',
+      video: 'Video',
+      upcoming: 'In arrivo',
+      resetFilters: 'Reimposta filtri',
+      share: 'Condividi',
+      hint: 'Trascina la guida per muoverti. Usa Vista per lo zoom, Ctrl + rotellina o pinch su mobile.',
+      copied: 'Link copiato',
+      copyFallback: 'Copia questo link:',
+      switching: 'Il cambio della lingua può richiedere alcuni secondi. Attendi...'
+    };
+
+    UI.pl = {
+      ...UI.en,
+      title: 'Przewodnik po uniwersum Assassin’s Creed',
+      subtitle: 'Interaktywny przewodnik',
+      languageLabel: 'Język',
+      viewSettings: 'Widok',
+      zoomGroup: 'Skala',
+      zoomHelp: 'Powiększa lub zmniejsza przewodnik.',
+      fitGroup: 'Dopasowanie do ekranu',
+      fitHelp: 'Dopasuj przewodnik do szerokości, wysokości albo wróć do normalnego widoku po szerokości.',
+      navigationGroup: 'Tryb sterowania',
+      navigationHelp: 'Przesuwanie przewodnika: przeciągaj przewodnik. Zoom przez przeciąganie: przytrzymaj i przesuń w prawo/górę, aby przybliżyć, w lewo/dół, aby oddalić.',
+      showHint: 'Pokazuj podpowiedź nawigacji',
+      contentFilters: 'Filtry treści',
+      howButton: 'Jak zacząć?',
+      filtersButton: 'Filtry',
+      aboutButton: 'O projekcie',
+      fitWidth: 'Dopasuj do szerokości',
+      fitHeight: 'Dopasuj do wysokości',
+      resetView: 'Normalny widok',
+      panMode: 'Przesuwaj przewodnik',
+      zoomMode: 'Zoom przez przeciąganie',
+      mainFixed: 'Główna seria',
+      spinOffs: 'Spin-offy',
+      books: 'Książki',
+      nonfiction: 'Literatura faktu',
+      comics: 'Komiksy',
+      video: 'Wideo',
+      upcoming: 'Nadchodzące',
+      resetFilters: 'Resetuj filtry',
+      share: 'Udostępnij',
+      hint: 'Przeciągaj przewodnik, aby się poruszać. Zoom znajdziesz w Widoku, działa też Ctrl + kółko lub gest szczypania na telefonie.',
+      copied: 'Link skopiowany',
+      copyFallback: 'Skopiuj ten link:',
+      switching: 'Zmiana języka może potrwać kilka sekund. Proszę czekać...'
+    };
+
+    UI.tr = {
+      ...UI.en,
+      title: 'Assassin’s Creed evren rehberi',
+      subtitle: 'İnteraktif rehber',
+      languageLabel: 'Dil',
+      viewSettings: 'Görünüm',
+      zoomGroup: 'Ölçek',
+      zoomHelp: 'Rehberi büyütür veya küçültür.',
+      fitGroup: 'Ekrana sığdır',
+      fitHelp: 'Rehberi genişliğe, yüksekliğe sığdırabilir veya normal genişlik görünümüne dönebilirsin.',
+      navigationGroup: 'Kontrol modu',
+      navigationHelp: 'Rehberi taşı: rehberi sürükle. Sürükleyerek yakınlaştır: basılı tutup sağa/yukarı hareket ettirerek yakınlaştır, sola/aşağı hareket ettirerek uzaklaştır.',
+      showHint: 'Gezinme ipucunu göster',
+      contentFilters: 'İçerik filtreleri',
+      howButton: 'Nasıl başlanır?',
+      filtersButton: 'Filtreler',
+      aboutButton: 'Hakkında',
+      fitWidth: 'Genişliğe sığdır',
+      fitHeight: 'Yüksekliğe sığdır',
+      resetView: 'Normal görünüm',
+      panMode: 'Rehberi taşı',
+      zoomMode: 'Sürükleyerek yakınlaştır',
+      mainFixed: 'Ana seri',
+      spinOffs: 'Yan oyunlar',
+      books: 'Kitaplar',
+      nonfiction: 'Kurgu dışı',
+      comics: 'Çizgi romanlar',
+      video: 'Video',
+      upcoming: 'Yakında',
+      resetFilters: 'Filtreleri sıfırla',
+      share: 'Paylaş',
+      hint: 'Gezinmek için rehberi sürükle. Yakınlaştırma için Görünüm menüsünü, Ctrl + tekerleği veya mobilde kıstırma hareketini kullan.',
+      copied: 'Bağlantı kopyalandı',
+      copyFallback: 'Bu bağlantıyı kopyala:',
+      switching: 'Dil değiştirme birkaç saniye sürebilir. Lütfen bekleyin...'
+    };
+
+    UI.ja = {
+      ...UI.en,
+      title: 'アサシン クリード ユニバースガイド',
+      subtitle: 'インタラクティブガイド',
+      languageLabel: '言語',
+      viewSettings: '表示',
+      zoomGroup: '拡大縮小',
+      zoomHelp: 'ガイドを大きく、または小さく表示します。',
+      fitGroup: '画面に合わせる',
+      fitHelp: '幅や高さに合わせるか、標準の幅表示に戻します。',
+      navigationGroup: '操作モード',
+      navigationHelp: 'ガイドを移動：ドラッグして移動します。ドラッグズーム：押したまま右/上へ動かすと拡大、左/下へ動かすと縮小します。',
+      showHint: '操作ヒントを表示',
+      contentFilters: 'コンテンツフィルター',
+      howButton: '始め方',
+      filtersButton: 'フィルター',
+      aboutButton: 'プロジェクトについて',
+      fitWidth: '幅に合わせる',
+      fitHeight: '高さに合わせる',
+      resetView: '標準表示',
+      panMode: 'ガイドを移動',
+      zoomMode: 'ドラッグでズーム',
+      mainFixed: 'メインシリーズ',
+      spinOffs: 'スピンオフ',
+      books: '書籍',
+      nonfiction: 'ノンフィクション',
+      comics: 'コミック',
+      video: '映像',
+      upcoming: '今後の作品',
+      resetFilters: 'フィルターをリセット',
+      share: '共有',
+      hint: 'ガイドをドラッグして移動します。ズームは「表示」メニュー、Ctrl + ホイール、またはモバイルのピンチ操作で行えます。',
+      copied: 'リンクをコピーしました',
+      copyFallback: 'このリンクをコピーしてください：',
+      switching: '言語の切り替えには数秒かかる場合があります。しばらくお待ちください...'
+    };
+
+    UI.ko = {
+      ...UI.en,
+      title: 'Assassin’s Creed 세계관 가이드',
+      subtitle: '인터랙티브 가이드',
+      languageLabel: '언어',
+      viewSettings: '보기',
+      zoomGroup: '크기 조절',
+      zoomHelp: '가이드를 더 크게 또는 더 작게 표시합니다.',
+      fitGroup: '화면에 맞추기',
+      fitHelp: '가이드를 너비나 높이에 맞추거나 기본 너비 보기로 되돌립니다.',
+      navigationGroup: '조작 모드',
+      navigationHelp: '가이드 이동: 가이드를 드래그하세요. 드래그 확대: 누른 채 오른쪽/위로 움직이면 확대, 왼쪽/아래로 움직이면 축소됩니다.',
+      showHint: '탐색 도움말 표시',
+      contentFilters: '콘텐츠 필터',
+      howButton: '어떻게 시작?',
+      filtersButton: '필터',
+      aboutButton: '프로젝트 소개',
+      fitWidth: '너비에 맞춤',
+      fitHeight: '높이에 맞춤',
+      resetView: '기본 보기',
+      panMode: '가이드 이동',
+      zoomMode: '드래그로 확대',
+      mainFixed: '메인 시리즈',
+      spinOffs: '스핀오프',
+      books: '도서',
+      nonfiction: '논픽션',
+      comics: '코믹스',
+      video: '영상',
+      upcoming: '예정작',
+      resetFilters: '필터 초기화',
+      share: '공유',
+      hint: '가이드를 드래그해 이동하세요. 확대는 보기 메뉴, Ctrl + 휠 또는 모바일 핀치 제스처를 사용하세요.',
+      copied: '링크가 복사되었습니다',
+      copyFallback: '이 링크를 복사하세요:',
+      switching: '언어 전환에 몇 초 정도 걸릴 수 있습니다. 잠시만 기다려 주세요...'
+    };
+
+    const topbar = document.querySelector('#topbar');
     const viewer = document.querySelector('#viewer');
     const guideWrap = document.querySelector('#guide-wrap');
     const baseLayer = document.querySelector('#base-layer');
     const baseLayerNext = document.querySelector('#base-layer-next');
     const toast = document.querySelector('#toast');
+    const hint = document.querySelector('#hint');
     const viewMenu = document.querySelector('#view-menu');
+    const viewSummary = document.querySelector('#view-summary');
     const languageLoader = document.querySelector('#language-loader');
     const languageLoaderText = document.querySelector('#language-loader-text');
 
@@ -2100,6 +1723,7 @@
     const shareButton = document.querySelector('#share-view');
     const modePanButton = document.querySelector('#mode-pan');
     const modeZoomButton = document.querySelector('#mode-zoom');
+    const hintToggle = document.querySelector('#hint-toggle');
 
     const howOpenButton = document.querySelector('#how-open');
     const mobileHowOpenButton = document.querySelector('#mobile-how-open');
@@ -2112,8 +1736,6 @@
     const mobileFiltersOpenButton = document.querySelector('#mobile-filters-open');
     const filtersCloseButton = document.querySelector('#filters-close');
 
-    const mobileViewOpenButton = document.querySelector('#mobile-view-open');
-
     const welcomeModal = document.querySelector('#welcome-modal');
     const welcomeTitle = document.querySelector('#welcome-title');
     const welcomeContent = document.querySelector('#welcome-content');
@@ -2122,6 +1744,7 @@
     const welcomeHowButton = document.querySelector('#welcome-how');
 
     const aboutOpenButtons = document.querySelectorAll('.about-open-button');
+    const mobileAboutOpenButton = document.querySelector('#mobile-about-open');
     const aboutModal = document.querySelector('#about-modal');
     const aboutCloseButton = document.querySelector('#about-close');
     const aboutTitle = document.querySelector('#about-title');
@@ -2136,6 +1759,7 @@
       lang: 'en',
       mode: 'pan',
       zoom: 1,
+      showHint: true,
       filters: {
         'spin-offs': true,
         books: true,
@@ -2169,6 +1793,17 @@
       return window.matchMedia('(max-width: 900px)').matches;
     }
 
+    function updateMobileMenuPosition() {
+      if (!isMobileLayout()) {
+        return;
+      }
+
+      const rect = topbar.getBoundingClientRect();
+      const top = Math.ceil(rect.bottom + 8);
+
+      document.documentElement.style.setProperty('--mobile-menu-top', `${top}px`);
+    }
+
     function clamp(value, min, max) {
       return Math.min(max, Math.max(min, value));
     }
@@ -2198,6 +1833,7 @@
         const saved = {
           lang: state.lang,
           mode: state.mode,
+          showHint: state.showHint,
           filters: state.filters
         };
 
@@ -2420,6 +2056,15 @@
       filtersModal.classList.add('hidden');
     }
 
+    function applyHintVisibility(shouldSave = true) {
+      hintToggle.checked = state.showHint !== false;
+      hint.classList.toggle('is-hidden', state.showHint === false);
+
+      if (shouldSave) {
+        saveState();
+      }
+    }
+
     function switchBaseLayer(src, fromLang, toLang, shouldNotify) {
       if (baseLayer.getAttribute('src') === src) {
         hideLanguageLoader();
@@ -2487,6 +2132,8 @@
       renderWelcomeModal();
       renderAboutModal();
       saveState();
+
+      requestAnimationFrame(updateMobileMenuPosition);
     }
 
     function setMode(mode) {
@@ -2602,6 +2249,10 @@
           state.mode = saved.mode;
         }
 
+        if (typeof saved.showHint === 'boolean') {
+          state.showHint = saved.showHint;
+        }
+
         if (saved.filters) {
           FILTERS.forEach((key) => {
             if (typeof saved.filters[key] === 'boolean') {
@@ -2631,6 +2282,16 @@
 
       if (mode === 'pan' || mode === 'zoom') {
         state.mode = mode;
+        hasState = true;
+      }
+
+      if (params.get('hint') === '0') {
+        state.showHint = false;
+        hasState = true;
+      }
+
+      if (params.get('hint') === '1') {
+        state.showHint = true;
         hasState = true;
       }
 
@@ -2801,8 +2462,18 @@
       }
     });
 
+    viewSummary.addEventListener('click', () => {
+      updateMobileMenuPosition();
+    });
+
+    viewMenu.addEventListener('toggle', () => {
+      if (viewMenu.open) {
+        updateMobileMenuPosition();
+      }
+    });
+
     document.addEventListener('click', (event) => {
-      if (viewMenu && viewMenu.open && !viewMenu.contains(event.target) && event.target !== mobileViewOpenButton) {
+      if (viewMenu && viewMenu.open && !viewMenu.contains(event.target)) {
         viewMenu.open = false;
       }
     });
@@ -2816,6 +2487,11 @@
         state.filters[checkbox.dataset.layer] = checkbox.checked;
         applyFilters();
       });
+    });
+
+    hintToggle.addEventListener('change', () => {
+      state.showHint = hintToggle.checked;
+      applyHintVisibility(true);
     });
 
     zoomOutButton.addEventListener('click', () => {
@@ -2849,10 +2525,6 @@
     mobileFiltersOpenButton.addEventListener('click', openFiltersModal);
     filtersCloseButton.addEventListener('click', closeFiltersModal);
 
-    mobileViewOpenButton.addEventListener('click', () => {
-      viewMenu.open = !viewMenu.open;
-    });
-
     welcomeCloseButton.addEventListener('click', () => closeWelcomeModal(true));
     welcomeCloseXButton.addEventListener('click', () => closeWelcomeModal(true));
 
@@ -2865,6 +2537,7 @@
       button.addEventListener('click', openAboutModal);
     });
 
+    mobileAboutOpenButton.addEventListener('click', openAboutModal);
     aboutCloseButton.addEventListener('click', closeAboutModal);
 
     howModal.addEventListener('click', (event) => {
@@ -2899,6 +2572,7 @@
         if (!filtersModal.classList.contains('hidden')) closeFiltersModal();
         if (!welcomeModal.classList.contains('hidden')) closeWelcomeModal(true);
         if (!aboutModal.classList.contains('hidden')) closeAboutModal();
+        if (viewMenu.open) viewMenu.open = false;
         return;
       }
 
@@ -2954,6 +2628,7 @@
 
       computeBaseGuideWidth();
       applyZoom();
+      updateMobileMenuPosition();
 
       requestAnimationFrame(() => {
         viewer.scrollLeft = guideWrap.offsetLeft + xRatio * guideWrap.offsetWidth - viewer.clientWidth / 2;
@@ -2980,9 +2655,11 @@
 
     computeBaseGuideWidth();
     applyZoom();
+    updateMobileMenuPosition();
     setLanguage(state.lang);
     setMode(state.mode);
     applyFilters();
+    applyHintVisibility(false);
     renderHowModal();
     renderWelcomeModal();
     renderAboutModal();
