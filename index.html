@@ -17,6 +17,14 @@
       --active: #ffffff;
       --active-text: #071018;
       --radius: 10px;
+
+      --color-main-series: #D43144;
+      --color-spin-offs: #28E989;
+      --color-books: #08D9C2;
+      --color-nonref-books: #08D9C2;
+      --color-video: #FFA472;
+      --color-comics: #D79BDB;
+      --color-upcoming: #FFFFFF;
     }
 
     * {
@@ -156,6 +164,7 @@
     }
 
     .check-pill {
+      --pill-color: var(--active);
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -169,6 +178,7 @@
       cursor: pointer;
       user-select: none;
       white-space: nowrap;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
     }
 
     .check-pill:hover {
@@ -181,20 +191,61 @@
       accent-color: #ffffff;
     }
 
+    .check-pill.is-on {
+      background: var(--pill-color);
+      color: #071018;
+      border-color: var(--pill-color);
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+    }
+
+    .check-pill.is-on input {
+      accent-color: #071018;
+    }
+
+    .check-pill[data-filter-color="spin-offs"] {
+      --pill-color: var(--color-spin-offs);
+    }
+
+    .check-pill[data-filter-color="books"] {
+      --pill-color: var(--color-books);
+    }
+
+    .check-pill[data-filter-color="nonref-books"] {
+      --pill-color: var(--color-nonref-books);
+    }
+
+    .check-pill[data-filter-color="video"] {
+      --pill-color: var(--color-video);
+    }
+
+    .check-pill[data-filter-color="comics"] {
+      --pill-color: var(--color-comics);
+    }
+
+    .check-pill[data-filter-color="upcoming"] {
+      --pill-color: var(--color-upcoming);
+    }
+
+    .check-pill[data-filter-color="upcoming"].is-on {
+      background: #FFFFFF;
+      color: #071018;
+      border-color: #000000;
+    }
+
     .fixed-pill {
       display: inline-flex;
       align-items: center;
       gap: 7px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      background: rgba(255, 255, 255, 0.12);
-      color: var(--text);
+      border: 1px solid var(--color-main-series);
+      background: var(--color-main-series);
+      color: #ffffff;
       border-radius: var(--radius);
       padding: 7px 10px;
       font-size: 13px;
       line-height: 1;
       user-select: none;
       white-space: nowrap;
-      opacity: 0.92;
+      opacity: 0.98;
     }
 
     .fixed-dot {
@@ -432,38 +483,38 @@
             <span data-i18n="mainFixed">Main Series</span>
           </span>
 
-          <label class="check-pill">
+          <label class="check-pill" data-filter-color="spin-offs">
             <input type="checkbox" data-layer="spin-offs" checked>
             <span data-i18n="spinOffs">Spin-offs</span>
           </label>
 
-          <label class="check-pill">
+          <label class="check-pill" data-filter-color="books">
             <input type="checkbox" data-layer="books" checked>
             <span data-i18n="books">Books</span>
           </label>
 
-          <label class="check-pill">
+          <label class="check-pill" data-filter-color="nonref-books">
             <input type="checkbox" data-layer="nonref-books" checked>
             <span data-i18n="nonfiction">Non-fiction</span>
           </label>
 
-          <label class="check-pill">
+          <label class="check-pill" data-filter-color="comics">
             <input type="checkbox" data-layer="comics" checked>
             <span data-i18n="comics">Comics</span>
           </label>
 
-          <label class="check-pill">
+          <label class="check-pill" data-filter-color="video">
             <input type="checkbox" data-layer="video" checked>
             <span data-i18n="video">Video</span>
           </label>
 
-          <label class="check-pill">
+          <label class="check-pill" data-filter-color="upcoming">
             <input type="checkbox" data-layer="upcoming" checked>
             <span data-i18n="upcoming">Upcoming</span>
           </label>
         </div>
 
-        <div class="toolbar-section view-extra">
+        <div class="toolbar-section">
           <button id="reset-filters" type="button" data-i18n="resetFilters">Reset Filters</button>
           <button id="share-view" type="button" data-i18n="share">Share</button>
         </div>
@@ -484,7 +535,7 @@
     </div>
 
     <div class="corner-panel" id="hint" data-i18n="hint">
-      Drag to move · Wheel / pinch to zoom · Zoom Drag for drag-based zoom
+      Drag to move · Ctrl + wheel / pinch to zoom · Middle mouse button to move
     </div>
 
     <div class="toast" id="toast"></div>
@@ -493,8 +544,7 @@
   <script>
     const BASE_WIDTH = 3000;
     const BASE_HEIGHT = 6466;
-    const STORAGE_KEY = 'ac-guide-optimized-viewer-v1';
-    const BLANK_PIXEL = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+    const STORAGE_KEY = 'ac-guide-optimized-viewer-v3';
 
     const BASE_BY_LANG = {
       en: 'assets/layers/base-en.png',
@@ -529,7 +579,7 @@
         upcoming: 'Upcoming',
         resetFilters: 'Reset Filters',
         share: 'Share',
-        hint: 'Drag to move · Wheel / pinch to zoom · Zoom Drag for drag-based zoom',
+        hint: 'Drag to move · Ctrl + wheel / pinch to zoom · Middle mouse button to move',
         copied: 'Link copied',
         copyFallback: 'Copy this link:'
       },
@@ -550,7 +600,7 @@
         upcoming: 'Будущее',
         resetFilters: 'Сброс фильтров',
         share: 'Поделиться',
-        hint: 'Тяни, чтобы двигать · Колесо / pinch — зум · Zoom Drag — зум движением мыши',
+        hint: 'Тяни, чтобы двигать · Ctrl + колесо / pinch — зум · Средняя кнопка мыши — перемещение',
         copied: 'Ссылка скопирована',
         copyFallback: 'Скопируй ссылку:'
       },
@@ -571,7 +621,7 @@
         upcoming: '即将推出',
         resetFilters: '重置筛选',
         share: '分享',
-        hint: '拖动移动 · 滚轮 / 双指缩放 · 拖动缩放模式可通过移动鼠标缩放',
+        hint: '拖动移动 · Ctrl + 滚轮 / 双指缩放 · 鼠标中键移动',
         copied: '链接已复制',
         copyFallback: '复制此链接：'
       }
@@ -624,7 +674,8 @@
       startY: 0,
       startScrollLeft: 0,
       startScrollTop: 0,
-      startZoom: 1
+      startZoom: 1,
+      middlePan: false
     };
 
     let pinch = {
@@ -807,7 +858,15 @@
     function applyFilters() {
       checkboxes.forEach((checkbox) => {
         const key = checkbox.dataset.layer;
-        checkbox.checked = state.filters[key] !== false;
+        const visible = state.filters[key] !== false;
+
+        checkbox.checked = visible;
+
+        const pill = checkbox.closest('.check-pill');
+
+        if (pill) {
+          pill.classList.toggle('is-on', visible);
+        }
       });
 
       filterLayers.forEach((layer) => {
@@ -983,6 +1042,7 @@
       if (drag.active && event && drag.pointerId === event.pointerId) {
         drag.active = false;
         drag.pointerId = null;
+        drag.middlePan = false;
       }
 
       if (pointers.size < 2) {
@@ -996,7 +1056,11 @@
     }
 
     viewer.addEventListener('pointerdown', (event) => {
-      if (event.button !== 0 && event.pointerType === 'mouse') {
+      const isMouse = event.pointerType === 'mouse';
+      const isLeftButton = event.button === 0;
+      const isMiddleButton = event.button === 1;
+
+      if (isMouse && !isLeftButton && !isMiddleButton) {
         return;
       }
 
@@ -1021,9 +1085,10 @@
       drag.startScrollLeft = viewer.scrollLeft;
       drag.startScrollTop = viewer.scrollTop;
       drag.startZoom = state.zoom;
+      drag.middlePan = isMiddleButton;
 
-      viewer.classList.toggle('is-panning', state.mode === 'pan');
-      viewer.classList.toggle('is-zoom-dragging', state.mode === 'zoom');
+      viewer.classList.toggle('is-panning', state.mode === 'pan' || drag.middlePan);
+      viewer.classList.toggle('is-zoom-dragging', state.mode === 'zoom' && !drag.middlePan);
     });
 
     viewer.addEventListener('pointermove', (event) => {
@@ -1053,7 +1118,7 @@
       const deltaX = event.clientX - drag.startX;
       const deltaY = event.clientY - drag.startY;
 
-      if (state.mode === 'pan') {
+      if (state.mode === 'pan' || drag.middlePan) {
         viewer.scrollLeft = drag.startScrollLeft - deltaX;
         viewer.scrollTop = drag.startScrollTop - deltaY;
         return;
@@ -1068,11 +1133,25 @@
     viewer.addEventListener('lostpointercapture', stopInteraction);
 
     viewer.addEventListener('wheel', (event) => {
-      event.preventDefault();
+      if (event.ctrlKey || event.metaKey) {
+        event.preventDefault();
 
-      const zoomFactor = Math.exp(-event.deltaY * 0.001);
-      setZoomAt(event.clientX, event.clientY, state.zoom * zoomFactor);
+        const zoomFactor = Math.exp(-event.deltaY * 0.001);
+        setZoomAt(event.clientX, event.clientY, state.zoom * zoomFactor);
+      }
     }, { passive: false });
+
+    viewer.addEventListener('mousedown', (event) => {
+      if (event.button === 1) {
+        event.preventDefault();
+      }
+    });
+
+    viewer.addEventListener('auxclick', (event) => {
+      if (event.button === 1) {
+        event.preventDefault();
+      }
+    });
 
     languageSelect.addEventListener('change', () => {
       setLanguage(languageSelect.value);
