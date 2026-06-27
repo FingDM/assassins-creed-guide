@@ -345,13 +345,16 @@
       right: 16px;
       bottom: 16px;
       z-index: 70;
+      max-width: min(520px, calc(100vw - 32px));
       padding: 10px 12px;
       border: 1px solid var(--line);
-      background: rgba(7, 11, 16, 0.9);
+      background: rgba(7, 11, 16, 0.92);
       backdrop-filter: blur(10px);
       border-radius: var(--radius);
       color: var(--text);
       font-size: 13px;
+      line-height: 1.35;
+      white-space: pre-line;
       opacity: 0;
       transform: translateY(8px);
       pointer-events: none;
@@ -419,6 +422,7 @@
         left: 10px;
         right: 10px;
         bottom: 52px;
+        max-width: none;
         text-align: center;
       }
     }
@@ -553,7 +557,7 @@
   <script>
     const BASE_WIDTH = 3000;
     const BASE_HEIGHT = 6466;
-    const STORAGE_KEY = 'ac-guide-optimized-viewer-v4';
+    const STORAGE_KEY = 'ac-guide-optimized-viewer-v5';
 
     const BASE_BY_LANG = {
       en: 'assets/layers/base-en.png',
@@ -599,7 +603,8 @@
         share: 'Share',
         hint: 'Drag to move · Ctrl + wheel / pinch to zoom · Middle mouse button to move',
         copied: 'Link copied',
-        copyFallback: 'Copy this link:'
+        copyFallback: 'Copy this link:',
+        switching: 'Switching language may take a few seconds. Please wait...'
       },
 
       ru: {
@@ -621,7 +626,8 @@
         share: 'Поделиться',
         hint: 'Тяни, чтобы двигать · Ctrl + колесо / pinch — зум · Средняя кнопка мыши — перемещение',
         copied: 'Ссылка скопирована',
-        copyFallback: 'Скопируй ссылку:'
+        copyFallback: 'Скопируй ссылку:',
+        switching: 'Переключение языка может занять несколько секунд. Пожалуйста, подождите...'
       },
 
       'zh-CN': {
@@ -643,7 +649,8 @@
         share: '分享',
         hint: '拖动移动 · Ctrl + 滚轮 / 双指缩放 · 鼠标中键移动',
         copied: '链接已复制',
-        copyFallback: '复制此链接：'
+        copyFallback: '复制此链接：',
+        switching: '切换语言可能需要几秒钟。请稍候...'
       },
 
       es: {
@@ -665,7 +672,8 @@
         share: 'Compartir',
         hint: 'Arrastra para mover · Ctrl + rueda / pellizcar para zoom · Botón central para mover',
         copied: 'Enlace copiado',
-        copyFallback: 'Copia este enlace:'
+        copyFallback: 'Copia este enlace:',
+        switching: 'Cambiar el idioma puede tardar unos segundos. Por favor, espera...'
       },
 
       fr: {
@@ -687,7 +695,8 @@
         share: 'Partager',
         hint: 'Glissez pour déplacer · Ctrl + molette / pincement pour zoomer · Bouton central pour déplacer',
         copied: 'Lien copié',
-        copyFallback: 'Copiez ce lien :'
+        copyFallback: 'Copiez ce lien :',
+        switching: 'Le changement de langue peut prendre quelques secondes. Veuillez patienter...'
       },
 
       'pt-BR': {
@@ -709,7 +718,8 @@
         share: 'Compartilhar',
         hint: 'Arraste para mover · Ctrl + roda / pinça para zoom · Botão do meio para mover',
         copied: 'Link copiado',
-        copyFallback: 'Copie este link:'
+        copyFallback: 'Copie este link:',
+        switching: 'A troca de idioma pode levar alguns segundos. Aguarde...'
       },
 
       de: {
@@ -731,7 +741,8 @@
         share: 'Teilen',
         hint: 'Ziehen zum Bewegen · Strg + Mausrad / Pinch zum Zoomen · Mittlere Maustaste zum Bewegen',
         copied: 'Link kopiert',
-        copyFallback: 'Diesen Link kopieren:'
+        copyFallback: 'Diesen Link kopieren:',
+        switching: 'Der Sprachwechsel kann einige Sekunden dauern. Bitte warten...'
       },
 
       ja: {
@@ -753,7 +764,8 @@
         share: '共有',
         hint: 'ドラッグで移動 · Ctrl + ホイール / ピンチでズーム · 中ボタンで移動',
         copied: 'リンクをコピーしました',
-        copyFallback: 'このリンクをコピーしてください：'
+        copyFallback: 'このリンクをコピーしてください：',
+        switching: '言語の切り替えには数秒かかる場合があります。しばらくお待ちください...'
       },
 
       ko: {
@@ -775,7 +787,8 @@
         share: '공유',
         hint: '드래그하여 이동 · Ctrl + 휠 / 핀치로 확대 · 마우스 가운데 버튼으로 이동',
         copied: '링크가 복사되었습니다',
-        copyFallback: '이 링크를 복사하세요:'
+        copyFallback: '이 링크를 복사하세요:',
+        switching: '언어 전환에 몇 초 정도 걸릴 수 있습니다. 잠시만 기다려 주세요...'
       },
 
       it: {
@@ -797,7 +810,8 @@
         share: 'Condividi',
         hint: 'Trascina per spostare · Ctrl + rotellina / pinch per zoomare · Tasto centrale per spostare',
         copied: 'Link copiato',
-        copyFallback: 'Copia questo link:'
+        copyFallback: 'Copia questo link:',
+        switching: 'Il cambio della lingua può richiedere alcuni secondi. Attendi...'
       },
 
       pl: {
@@ -819,7 +833,8 @@
         share: 'Udostępnij',
         hint: 'Przeciągnij, aby przesunąć · Ctrl + kółko / gest szczypania, aby powiększyć · Środkowy przycisk myszy do przesuwania',
         copied: 'Link skopiowany',
-        copyFallback: 'Skopiuj ten link:'
+        copyFallback: 'Skopiuj ten link:',
+        switching: 'Zmiana języka może potrwać kilka sekund. Proszę czekać...'
       },
 
       tr: {
@@ -841,7 +856,8 @@
         share: 'Paylaş',
         hint: 'Taşımak için sürükle · Ctrl + tekerlek / kıstırma ile yakınlaştır · Orta fare tuşu ile taşı',
         copied: 'Bağlantı kopyalandı',
-        copyFallback: 'Bu bağlantıyı kopyala:'
+        copyFallback: 'Bu bağlantıyı kopyala:',
+        switching: 'Dil değiştirme birkaç saniye sürebilir. Lütfen bekleyin...'
       }
     };
 
@@ -935,7 +951,6 @@
         const saved = {
           lang: state.lang,
           mode: state.mode,
-          zoom: state.zoom,
           filters: state.filters
         };
 
@@ -971,7 +986,6 @@
       requestAnimationFrame(() => {
         viewer.scrollLeft = guideWrap.offsetLeft + point.xRatio * guideWrap.offsetWidth - point.viewX;
         viewer.scrollTop = guideWrap.offsetTop + point.yRatio * guideWrap.offsetHeight - point.viewY;
-        saveState();
       });
     }
 
@@ -988,7 +1002,6 @@
       requestAnimationFrame(() => {
         viewer.scrollLeft = Math.max(0, (viewer.scrollWidth - viewer.clientWidth) / 2);
         viewer.scrollTop = 0;
-        saveState();
       });
     }
 
@@ -1004,19 +1017,11 @@
       requestAnimationFrame(() => {
         viewer.scrollLeft = Math.max(0, (viewer.scrollWidth - viewer.clientWidth) / 2);
         viewer.scrollTop = 0;
-        saveState();
       });
     }
 
     function resetView() {
-      state.zoom = 1;
-      applyZoom();
-
-      requestAnimationFrame(() => {
-        viewer.scrollLeft = Math.max(0, (viewer.scrollWidth - viewer.clientWidth) / 2);
-        viewer.scrollTop = 0;
-        saveState();
-      });
+      fitWidth();
     }
 
     function setLanguage(lang) {
@@ -1111,7 +1116,7 @@
       applyFilters();
     }
 
-    function showToast(message) {
+    function showToast(message, duration = 1600) {
       window.clearTimeout(toastTimer);
 
       toast.textContent = message;
@@ -1119,7 +1124,18 @@
 
       toastTimer = window.setTimeout(() => {
         toast.classList.remove('visible');
-      }, 1600);
+      }, duration);
+    }
+
+    function showLanguageSwitchNotice(fromLang, toLang) {
+      const fromDictionary = UI[fromLang] || UI.en;
+      const toDictionary = UI[toLang] || UI.en;
+
+      if (fromLang === toLang) {
+        return;
+      }
+
+      showToast(`${fromDictionary.switching}\n${toDictionary.switching}`, 1800);
     }
 
     function getShareUrl() {
@@ -1130,10 +1146,6 @@
 
       if (state.mode !== 'pan') {
         url.searchParams.set('mode', state.mode);
-      }
-
-      if (Math.abs(state.zoom - 1) > 0.01) {
-        url.searchParams.set('zoom', state.zoom.toFixed(2));
       }
 
       FILTERS.forEach((key) => {
@@ -1173,10 +1185,6 @@
           state.mode = saved.mode;
         }
 
-        if (typeof saved.zoom === 'number') {
-          state.zoom = clamp(saved.zoom, 0.35, getMaxZoom());
-        }
-
         if (saved.filters) {
           FILTERS.forEach((key) => {
             if (typeof saved.filters[key] === 'boolean') {
@@ -1194,7 +1202,6 @@
 
       const lang = params.get('lang');
       const mode = params.get('mode');
-      const zoom = Number(params.get('zoom'));
 
       if (BASE_BY_LANG[lang]) {
         state.lang = lang;
@@ -1202,10 +1209,6 @@
 
       if (mode === 'pan' || mode === 'zoom') {
         state.mode = mode;
-      }
-
-      if (Number.isFinite(zoom)) {
-        state.zoom = clamp(zoom, 0.35, getMaxZoom());
       }
 
       FILTERS.forEach((key) => {
@@ -1372,7 +1375,11 @@
     });
 
     languageSelect.addEventListener('change', () => {
-      setLanguage(languageSelect.value);
+      const previousLang = state.lang;
+      const nextLang = languageSelect.value;
+
+      showLanguageSwitchNotice(previousLang, nextLang);
+      setLanguage(nextLang);
     });
 
     checkboxes.forEach((checkbox) => {
@@ -1485,11 +1492,7 @@
     setLanguage(state.lang);
     setMode(state.mode);
     applyFilters();
-
-    requestAnimationFrame(() => {
-      viewer.scrollLeft = Math.max(0, (viewer.scrollWidth - viewer.clientWidth) / 2);
-      viewer.scrollTop = 0;
-    });
+    fitWidth();
   </script>
 </body>
 </html>
