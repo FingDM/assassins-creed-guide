@@ -21,7 +21,7 @@
       --color-main-series: #D43144;
       --color-spin-offs: #28E989;
       --color-books: #08D9C2;
-      --color-nonref-books: #08D9C2;
+      --color-nonref-books: #9DE6FF;
       --color-video: #FFA472;
       --color-comics: #D79BDB;
       --color-upcoming: #FFFFFF;
@@ -443,7 +443,7 @@
   <header class="topbar">
     <div class="brand">
       <div class="title" data-i18n="title">Assassin's Creed Universe Guide</div>
-      <div class="subtitle" data-i18n="subtitle">Interactive layered prototype</div>
+      <div class="subtitle" data-i18n="subtitle">Interactive guide</div>
     </div>
 
     <div class="toolbar">
@@ -453,6 +453,15 @@
             <option value="en">🇬🇧 English</option>
             <option value="ru">🇷🇺 Русский</option>
             <option value="zh-CN">🇨🇳 简体中文</option>
+            <option value="es">🇪🇸 Español</option>
+            <option value="fr">🇫🇷 Français</option>
+            <option value="pt-BR">🇧🇷 Português-BR</option>
+            <option value="de">🇩🇪 Deutsch</option>
+            <option value="ja">🇯🇵 日本語</option>
+            <option value="ko">🇰🇷 한국어</option>
+            <option value="it">🇮🇹 Italiano</option>
+            <option value="pl">🇵🇱 Polski</option>
+            <option value="tr">🇹🇷 Türkçe</option>
           </select>
         </div>
 
@@ -544,12 +553,21 @@
   <script>
     const BASE_WIDTH = 3000;
     const BASE_HEIGHT = 6466;
-    const STORAGE_KEY = 'ac-guide-optimized-viewer-v3';
+    const STORAGE_KEY = 'ac-guide-optimized-viewer-v4';
 
     const BASE_BY_LANG = {
       en: 'assets/layers/base-en.png',
       ru: 'assets/layers/base-ru.png',
-      'zh-CN': 'assets/layers/base-zh-CN.png'
+      'zh-CN': 'assets/layers/base-zh-CN.png',
+      es: 'assets/layers/base-es.png',
+      fr: 'assets/layers/base-fr.png',
+      'pt-BR': 'assets/layers/base-pt-BR.png',
+      de: 'assets/layers/base-de.png',
+      ja: 'assets/layers/base-ja.png',
+      ko: 'assets/layers/base-ko.png',
+      it: 'assets/layers/base-it.png',
+      pl: 'assets/layers/base-pl.png',
+      tr: 'assets/layers/base-tr.png'
     };
 
     const FILTERS = [
@@ -564,7 +582,7 @@
     const UI = {
       en: {
         title: "Assassin's Creed Universe Guide",
-        subtitle: 'Interactive layered prototype',
+        subtitle: 'Interactive guide',
         fitWidth: 'Fit Width',
         fitHeight: 'Fit Height',
         resetView: 'Reset View',
@@ -583,9 +601,10 @@
         copied: 'Link copied',
         copyFallback: 'Copy this link:'
       },
+
       ru: {
         title: 'Гайд по вселенной Assassin’s Creed',
-        subtitle: 'Интерактивный прототип со слоями',
+        subtitle: 'Интерактивный гайд',
         fitWidth: 'По ширине',
         fitHeight: 'По высоте',
         resetView: 'Сброс вида',
@@ -604,16 +623,17 @@
         copied: 'Ссылка скопирована',
         copyFallback: 'Скопируй ссылку:'
       },
+
       'zh-CN': {
         title: '刺客信条宇宙指南',
-        subtitle: '交互式分层原型',
+        subtitle: '交互式指南',
         fitWidth: '适应宽度',
         fitHeight: '适应高度',
         resetView: '重置视图',
         panMode: '移动',
         zoomMode: '拖动缩放',
         mainFixed: '主系列',
-        spinOffs: '衍生作品',
+        spinOffs: '衍生游戏',
         books: '书籍',
         nonfiction: '非虚构',
         comics: '漫画',
@@ -624,6 +644,204 @@
         hint: '拖动移动 · Ctrl + 滚轮 / 双指缩放 · 鼠标中键移动',
         copied: '链接已复制',
         copyFallback: '复制此链接：'
+      },
+
+      es: {
+        title: 'Guía del universo de Assassin’s Creed',
+        subtitle: 'Guía interactiva',
+        fitWidth: 'Ajustar al ancho',
+        fitHeight: 'Ajustar a la altura',
+        resetView: 'Restablecer vista',
+        panMode: 'Mover',
+        zoomMode: 'Zoom arrastrando',
+        mainFixed: 'Serie principal',
+        spinOffs: 'Spin-offs',
+        books: 'Libros',
+        nonfiction: 'No ficción',
+        comics: 'Cómics',
+        video: 'Video',
+        upcoming: 'Próximos',
+        resetFilters: 'Restablecer filtros',
+        share: 'Compartir',
+        hint: 'Arrastra para mover · Ctrl + rueda / pellizcar para zoom · Botón central para mover',
+        copied: 'Enlace copiado',
+        copyFallback: 'Copia este enlace:'
+      },
+
+      fr: {
+        title: 'Guide de l’univers Assassin’s Creed',
+        subtitle: 'Guide interactif',
+        fitWidth: 'Adapter à la largeur',
+        fitHeight: 'Adapter à la hauteur',
+        resetView: 'Réinitialiser la vue',
+        panMode: 'Déplacer',
+        zoomMode: 'Zoom glissé',
+        mainFixed: 'Série principale',
+        spinOffs: 'Jeux dérivés',
+        books: 'Livres',
+        nonfiction: 'Documentaire',
+        comics: 'BD',
+        video: 'Vidéo',
+        upcoming: 'À venir',
+        resetFilters: 'Réinitialiser les filtres',
+        share: 'Partager',
+        hint: 'Glissez pour déplacer · Ctrl + molette / pincement pour zoomer · Bouton central pour déplacer',
+        copied: 'Lien copié',
+        copyFallback: 'Copiez ce lien :'
+      },
+
+      'pt-BR': {
+        title: 'Guia do universo de Assassin’s Creed',
+        subtitle: 'Guia interativo',
+        fitWidth: 'Ajustar à largura',
+        fitHeight: 'Ajustar à altura',
+        resetView: 'Redefinir visão',
+        panMode: 'Mover',
+        zoomMode: 'Zoom ao arrastar',
+        mainFixed: 'Série principal',
+        spinOffs: 'Jogos derivados',
+        books: 'Livros',
+        nonfiction: 'Não ficção',
+        comics: 'Quadrinhos',
+        video: 'Vídeo',
+        upcoming: 'Futuros',
+        resetFilters: 'Redefinir filtros',
+        share: 'Compartilhar',
+        hint: 'Arraste para mover · Ctrl + roda / pinça para zoom · Botão do meio para mover',
+        copied: 'Link copiado',
+        copyFallback: 'Copie este link:'
+      },
+
+      de: {
+        title: 'Guide zum Assassin’s-Creed-Universum',
+        subtitle: 'Interaktiver Guide',
+        fitWidth: 'An Breite anpassen',
+        fitHeight: 'An Höhe anpassen',
+        resetView: 'Ansicht zurücksetzen',
+        panMode: 'Bewegen',
+        zoomMode: 'Zoom ziehen',
+        mainFixed: 'Hauptspielreihe',
+        spinOffs: 'Spin-offs',
+        books: 'Bücher',
+        nonfiction: 'Sachbücher',
+        comics: 'Comics',
+        video: 'Video',
+        upcoming: 'Kommend',
+        resetFilters: 'Filter zurücksetzen',
+        share: 'Teilen',
+        hint: 'Ziehen zum Bewegen · Strg + Mausrad / Pinch zum Zoomen · Mittlere Maustaste zum Bewegen',
+        copied: 'Link kopiert',
+        copyFallback: 'Diesen Link kopieren:'
+      },
+
+      ja: {
+        title: 'アサシン クリード ユニバースガイド',
+        subtitle: 'インタラクティブガイド',
+        fitWidth: '幅に合わせる',
+        fitHeight: '高さに合わせる',
+        resetView: '表示をリセット',
+        panMode: '移動',
+        zoomMode: 'ドラッグズーム',
+        mainFixed: 'メインシリーズ',
+        spinOffs: 'スピンオフ',
+        books: '書籍',
+        nonfiction: 'ノンフィクション',
+        comics: 'コミック',
+        video: '映像',
+        upcoming: '今後の作品',
+        resetFilters: 'フィルターをリセット',
+        share: '共有',
+        hint: 'ドラッグで移動 · Ctrl + ホイール / ピンチでズーム · 中ボタンで移動',
+        copied: 'リンクをコピーしました',
+        copyFallback: 'このリンクをコピーしてください：'
+      },
+
+      ko: {
+        title: 'Assassin’s Creed 세계관 가이드',
+        subtitle: '인터랙티브 가이드',
+        fitWidth: '너비에 맞춤',
+        fitHeight: '높이에 맞춤',
+        resetView: '보기 초기화',
+        panMode: '이동',
+        zoomMode: '드래그 확대',
+        mainFixed: '메인 시리즈',
+        spinOffs: '스핀오프',
+        books: '도서',
+        nonfiction: '논픽션',
+        comics: '코믹스',
+        video: '영상',
+        upcoming: '예정작',
+        resetFilters: '필터 초기화',
+        share: '공유',
+        hint: '드래그하여 이동 · Ctrl + 휠 / 핀치로 확대 · 마우스 가운데 버튼으로 이동',
+        copied: '링크가 복사되었습니다',
+        copyFallback: '이 링크를 복사하세요:'
+      },
+
+      it: {
+        title: 'Guida all’universo di Assassin’s Creed',
+        subtitle: 'Guida interattiva',
+        fitWidth: 'Adatta alla larghezza',
+        fitHeight: 'Adatta all’altezza',
+        resetView: 'Reimposta vista',
+        panMode: 'Sposta',
+        zoomMode: 'Zoom trascinando',
+        mainFixed: 'Serie principale',
+        spinOffs: 'Spin-off',
+        books: 'Libri',
+        nonfiction: 'Saggistica',
+        comics: 'Fumetti',
+        video: 'Video',
+        upcoming: 'In arrivo',
+        resetFilters: 'Reimposta filtri',
+        share: 'Condividi',
+        hint: 'Trascina per spostare · Ctrl + rotellina / pinch per zoomare · Tasto centrale per spostare',
+        copied: 'Link copiato',
+        copyFallback: 'Copia questo link:'
+      },
+
+      pl: {
+        title: 'Przewodnik po uniwersum Assassin’s Creed',
+        subtitle: 'Interaktywny przewodnik',
+        fitWidth: 'Dopasuj do szerokości',
+        fitHeight: 'Dopasuj do wysokości',
+        resetView: 'Resetuj widok',
+        panMode: 'Przesuń',
+        zoomMode: 'Zoom przez przeciąganie',
+        mainFixed: 'Główna seria',
+        spinOffs: 'Spin-offy',
+        books: 'Książki',
+        nonfiction: 'Literatura faktu',
+        comics: 'Komiksy',
+        video: 'Wideo',
+        upcoming: 'Nadchodzące',
+        resetFilters: 'Resetuj filtry',
+        share: 'Udostępnij',
+        hint: 'Przeciągnij, aby przesunąć · Ctrl + kółko / gest szczypania, aby powiększyć · Środkowy przycisk myszy do przesuwania',
+        copied: 'Link skopiowany',
+        copyFallback: 'Skopiuj ten link:'
+      },
+
+      tr: {
+        title: 'Assassin’s Creed evren rehberi',
+        subtitle: 'İnteraktif rehber',
+        fitWidth: 'Genişliğe sığdır',
+        fitHeight: 'Yüksekliğe sığdır',
+        resetView: 'Görünümü sıfırla',
+        panMode: 'Taşı',
+        zoomMode: 'Sürükleyerek yakınlaştır',
+        mainFixed: 'Ana seri',
+        spinOffs: 'Yan oyunlar',
+        books: 'Kitaplar',
+        nonfiction: 'Kurgu dışı',
+        comics: 'Çizgi romanlar',
+        video: 'Video',
+        upcoming: 'Yakında',
+        resetFilters: 'Filtreleri sıfırla',
+        share: 'Paylaş',
+        hint: 'Taşımak için sürükle · Ctrl + tekerlek / kıstırma ile yakınlaştır · Orta fare tuşu ile taşı',
+        copied: 'Bağlantı kopyalandı',
+        copyFallback: 'Bu bağlantıyı kopyala:'
       }
     };
 
