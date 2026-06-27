@@ -41,11 +41,13 @@
     }
 
     button,
-    label {
+    label,
+    select {
       font: inherit;
     }
 
-    button {
+    button,
+    select {
       border: 1px solid var(--line);
       background: rgba(255, 255, 255, 0.075);
       color: var(--text);
@@ -59,7 +61,19 @@
       transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.08s ease;
     }
 
-    button:hover {
+    select {
+      min-height: 34px;
+      padding-right: 32px;
+      background-color: rgba(255, 255, 255, 0.075);
+    }
+
+    select option {
+      color: #000000;
+      background: #ffffff;
+    }
+
+    button:hover,
+    select:hover {
       border-color: var(--line-strong);
       background: rgba(255, 255, 255, 0.13);
     }
@@ -226,10 +240,11 @@
     .guide-wrap {
       position: relative;
       width: 100%;
-      aspect-ratio: 5240 / 11294;
+      aspect-ratio: 3000 / 6466;
       margin: 0 auto;
       background: #070b10;
       flex: 0 0 auto;
+      overflow: hidden;
     }
 
     .guide-wrap img {
@@ -247,17 +262,13 @@
       display: none !important;
     }
 
-    .layer-background { z-index: 0; }
-    .layer-phases { z-index: 1; }
+    .layer-base { z-index: 0; }
     .layer-nonref-books { z-index: 3; }
     .layer-spin-offs { z-index: 4; }
     .layer-books { z-index: 5; }
     .layer-video { z-index: 6; }
     .layer-upcoming { z-index: 7; }
     .layer-comics { z-index: 8; }
-    .layer-main-games { z-index: 9; }
-    .layer-labels { z-index: 11; }
-    .layer-borders { z-index: 12; }
 
     .corner-panel {
       position: fixed;
@@ -329,6 +340,7 @@
       }
 
       button,
+      select,
       .check-pill,
       .fixed-pill {
         min-height: 36px;
@@ -386,8 +398,11 @@
     <div class="toolbar">
       <div class="toolbar-scroll">
         <div class="toolbar-section">
-          <button class="lang-btn active" type="button" data-lang="en">EN</button>
-          <button class="lang-btn" type="button" data-lang="ru">RU</button>
+          <select id="language-select" aria-label="Language">
+            <option value="en">🇬🇧 English</option>
+            <option value="ru">🇷🇺 Русский</option>
+            <option value="zh-CN">🇨🇳 简体中文</option>
+          </select>
         </div>
 
         <div class="section-divider"></div>
@@ -458,24 +473,14 @@
 
   <main id="viewer" class="viewer mode-pan">
     <div id="guide-wrap" class="guide-wrap" aria-label="Assassin's Creed Universe Guide">
-      <img class="layer-background" src="assets/layers/00-background.png" alt="Background">
+      <img id="base-layer" class="layer-base" src="assets/layers/base-en.png" alt="Base layer" decoding="async" fetchpriority="high">
 
-      <img class="layer-phases lang-layer lang-en" src="assets/layers/01-phases-localization.png" alt="Phases EN">
-      <img class="layer-phases lang-layer lang-ru hidden" src="assets/layers/01-phases-localization-ru.png" alt="Phases RU">
-
-      <img class="layer-nonref-books filter-layer" data-layer-name="nonref-books" src="assets/layers/03-nonref-books.png" alt="Non-fiction books">
-      <img class="layer-spin-offs filter-layer" data-layer-name="spin-offs" src="assets/layers/04-spin-offs.png" alt="Spin-offs">
-      <img class="layer-books filter-layer" data-layer-name="books" src="assets/layers/05-books.png" alt="Books">
-      <img class="layer-video filter-layer" data-layer-name="video" src="assets/layers/06-video.png" alt="Video">
-      <img class="layer-upcoming filter-layer" data-layer-name="upcoming" src="assets/layers/07-upcoming.png" alt="Upcoming">
-      <img class="layer-comics filter-layer" data-layer-name="comics" src="assets/layers/08-comics.png" alt="Comics">
-
-      <img class="layer-main-games" src="assets/layers/09-main-games.png" alt="Main games">
-
-      <img class="layer-labels lang-layer lang-en" src="assets/layers/11-labels-localization.png" alt="Labels EN">
-      <img class="layer-labels lang-layer lang-ru hidden" src="assets/layers/11-labels-localization-ru.png" alt="Labels RU">
-
-      <img class="layer-borders" src="assets/layers/12-borders.png" alt="Borders">
+      <img class="layer-nonref-books filter-layer" data-layer-name="nonref-books" data-src="assets/layers/03-nonref-books.png" alt="Non-fiction books" decoding="async">
+      <img class="layer-spin-offs filter-layer" data-layer-name="spin-offs" data-src="assets/layers/04-spin-offs.png" alt="Spin-offs" decoding="async">
+      <img class="layer-books filter-layer" data-layer-name="books" data-src="assets/layers/05-books.png" alt="Books" decoding="async">
+      <img class="layer-video filter-layer" data-layer-name="video" data-src="assets/layers/06-video.png" alt="Video" decoding="async">
+      <img class="layer-upcoming filter-layer" data-layer-name="upcoming" data-src="assets/layers/07-upcoming.png" alt="Upcoming" decoding="async">
+      <img class="layer-comics filter-layer" data-layer-name="comics" data-src="assets/layers/08-comics.png" alt="Comics" decoding="async">
     </div>
 
     <div class="corner-panel" id="hint" data-i18n="hint">
@@ -486,9 +491,16 @@
   </main>
 
   <script>
-    const BASE_WIDTH = 5240;
-    const BASE_HEIGHT = 11294;
-    const STORAGE_KEY = 'ac-guide-safe-viewer-v1';
+    const BASE_WIDTH = 3000;
+    const BASE_HEIGHT = 6466;
+    const STORAGE_KEY = 'ac-guide-optimized-viewer-v1';
+    const BLANK_PIXEL = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+
+    const BASE_BY_LANG = {
+      en: 'assets/layers/base-en.png',
+      ru: 'assets/layers/base-ru.png',
+      'zh-CN': 'assets/layers/base-zh-CN.png'
+    };
 
     const FILTERS = [
       'spin-offs',
@@ -541,15 +553,36 @@
         hint: 'Тяни, чтобы двигать · Колесо / pinch — зум · Zoom Drag — зум движением мыши',
         copied: 'Ссылка скопирована',
         copyFallback: 'Скопируй ссылку:'
+      },
+      'zh-CN': {
+        title: '刺客信条宇宙指南',
+        subtitle: '交互式分层原型',
+        fitWidth: '适应宽度',
+        fitHeight: '适应高度',
+        resetView: '重置视图',
+        panMode: '移动',
+        zoomMode: '拖动缩放',
+        mainFixed: '主系列',
+        spinOffs: '衍生作品',
+        books: '书籍',
+        nonfiction: '非虚构',
+        comics: '漫画',
+        video: '视频',
+        upcoming: '即将推出',
+        resetFilters: '重置筛选',
+        share: '分享',
+        hint: '拖动移动 · 滚轮 / 双指缩放 · 拖动缩放模式可通过移动鼠标缩放',
+        copied: '链接已复制',
+        copyFallback: '复制此链接：'
       }
     };
 
     const viewer = document.querySelector('#viewer');
     const guideWrap = document.querySelector('#guide-wrap');
+    const baseLayer = document.querySelector('#base-layer');
     const toast = document.querySelector('#toast');
 
-    const langButtons = document.querySelectorAll('.lang-btn');
-    const langLayers = document.querySelectorAll('.lang-layer');
+    const languageSelect = document.querySelector('#language-select');
     const checkboxes = document.querySelectorAll('input[type="checkbox"][data-layer]');
     const filterLayers = document.querySelectorAll('.filter-layer');
 
@@ -574,11 +607,11 @@
       zoom: 1,
       filters: {
         'spin-offs': true,
-        'books': true,
+        books: true,
         'nonref-books': true,
-        'comics': true,
-        'video': true,
-        'upcoming': true
+        comics: true,
+        video: true,
+        upcoming: true
       }
     };
 
@@ -600,24 +633,29 @@
       startZoom: 1
     };
 
+    function isMobileLayout() {
+      return window.matchMedia('(max-width: 900px)').matches;
+    }
+
     function clamp(value, min, max) {
       return Math.min(max, Math.max(min, value));
+    }
+
+    function getMaxZoom() {
+      return isMobileLayout() ? 4 : 6;
     }
 
     function getGuideWidth() {
       return baseGuideWidth * state.zoom;
     }
 
-    function getGuideHeight() {
-      return getGuideWidth() * (BASE_HEIGHT / BASE_WIDTH);
-    }
-
     function computeBaseGuideWidth() {
-      const padding = window.innerWidth <= 900 ? 28 : 48;
+      const padding = isMobileLayout() ? 28 : 48;
       baseGuideWidth = Math.max(280, viewer.clientWidth - padding);
     }
 
     function applyZoom() {
+      state.zoom = clamp(state.zoom, 0.35, getMaxZoom());
       guideWrap.style.width = `${getGuideWidth()}px`;
       zoomDisplayButton.textContent = `${Math.round(state.zoom * 100)}%`;
     }
@@ -658,7 +696,7 @@
     function setZoomAt(clientX, clientY, nextZoom) {
       const point = getPointInGuide(clientX, clientY);
 
-      state.zoom = clamp(nextZoom, 0.35, 6);
+      state.zoom = clamp(nextZoom, 0.35, getMaxZoom());
       applyZoom();
 
       requestAnimationFrame(() => {
@@ -691,7 +729,7 @@
       const availableHeight = Math.max(200, viewer.clientHeight - 32);
       const heightAtZoomOne = baseGuideWidth * (BASE_HEIGHT / BASE_WIDTH);
 
-      state.zoom = clamp(availableHeight / heightAtZoomOne, 0.35, 6);
+      state.zoom = clamp(availableHeight / heightAtZoomOne, 0.35, getMaxZoom());
       applyZoom();
 
       requestAnimationFrame(() => {
@@ -713,16 +751,17 @@
     }
 
     function setLanguage(lang) {
+      if (!BASE_BY_LANG[lang]) {
+        lang = 'en';
+      }
+
       state.lang = lang;
       document.documentElement.lang = lang;
+      languageSelect.value = lang;
 
-      langButtons.forEach((button) => {
-        button.classList.toggle('active', button.dataset.lang === lang);
-      });
-
-      langLayers.forEach((layer) => {
-        layer.classList.toggle('hidden', !layer.classList.contains(`lang-${lang}`));
-      });
+      if (baseLayer.getAttribute('src') !== BASE_BY_LANG[lang]) {
+        baseLayer.src = BASE_BY_LANG[lang];
+      }
 
       const dictionary = UI[lang] || UI.en;
 
@@ -749,6 +788,22 @@
       saveState();
     }
 
+    function shouldUnloadHiddenLayers() {
+      return isMobileLayout();
+    }
+
+    function ensureLayerLoaded(layer) {
+      if (!layer.getAttribute('src')) {
+        layer.src = layer.dataset.src;
+      }
+    }
+
+    function unloadLayer(layer) {
+      if (shouldUnloadHiddenLayers()) {
+        layer.removeAttribute('src');
+      }
+    }
+
     function applyFilters() {
       checkboxes.forEach((checkbox) => {
         const key = checkbox.dataset.layer;
@@ -757,7 +812,15 @@
 
       filterLayers.forEach((layer) => {
         const key = layer.dataset.layerName;
-        layer.classList.toggle('hidden', state.filters[key] === false);
+        const visible = state.filters[key] !== false;
+
+        layer.classList.toggle('hidden', !visible);
+
+        if (visible) {
+          ensureLayerLoaded(layer);
+        } else {
+          unloadLayer(layer);
+        }
       });
 
       saveState();
@@ -825,7 +888,7 @@
           return;
         }
 
-        if (saved.lang === 'en' || saved.lang === 'ru') {
+        if (BASE_BY_LANG[saved.lang]) {
           state.lang = saved.lang;
         }
 
@@ -834,7 +897,7 @@
         }
 
         if (typeof saved.zoom === 'number') {
-          state.zoom = clamp(saved.zoom, 0.35, 6);
+          state.zoom = clamp(saved.zoom, 0.35, getMaxZoom());
         }
 
         if (saved.filters) {
@@ -856,7 +919,7 @@
       const mode = params.get('mode');
       const zoom = Number(params.get('zoom'));
 
-      if (lang === 'en' || lang === 'ru') {
+      if (BASE_BY_LANG[lang]) {
         state.lang = lang;
       }
 
@@ -865,7 +928,7 @@
       }
 
       if (Number.isFinite(zoom)) {
-        state.zoom = clamp(zoom, 0.35, 6);
+        state.zoom = clamp(zoom, 0.35, getMaxZoom());
       }
 
       FILTERS.forEach((key) => {
@@ -1011,10 +1074,8 @@
       setZoomAt(event.clientX, event.clientY, state.zoom * zoomFactor);
     }, { passive: false });
 
-    langButtons.forEach((button) => {
-      button.addEventListener('click', () => {
-        setLanguage(button.dataset.lang);
-      });
+    languageSelect.addEventListener('change', () => {
+      setLanguage(languageSelect.value);
     });
 
     checkboxes.forEach((checkbox) => {
@@ -1050,7 +1111,7 @@
     window.addEventListener('keydown', (event) => {
       const tag = document.activeElement.tagName.toLowerCase();
 
-      if (tag === 'input' || tag === 'button') {
+      if (tag === 'input' || tag === 'button' || tag === 'select') {
         return;
       }
 
@@ -1109,9 +1170,13 @@
       });
     });
 
-    guideWrap.querySelectorAll('img').forEach((img) => {
+    baseLayer.addEventListener('error', () => {
+      console.warn(`Base layer not found: ${baseLayer.getAttribute('src')}`);
+    });
+
+    filterLayers.forEach((img) => {
       img.addEventListener('error', () => {
-        console.warn(`Layer not found: ${img.getAttribute('src')}`);
+        console.warn(`Layer not found: ${img.dataset.src}`);
       });
     });
 
