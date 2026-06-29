@@ -34,6 +34,8 @@
       --active-text: #071018;
       --radius: 10px;
       --mobile-menu-top: 150px;
+      --app-vh: 100dvh;
+      --mobile-bottom-reserve: 92px;
 
       --color-main-series: #D43144;
       --color-spin-offs: #28E989;
@@ -634,12 +636,17 @@
       justify-content: center;
       padding: 24px;
       background: rgba(0, 0, 0, 0.68);
-      backdrop-filter: blur(8px);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+
+    body.modal-open {
+      overflow: hidden;
     }
 
     .modal {
       width: min(760px, 100%);
-      max-height: min(760px, calc(100vh - 48px));
+      max-height: min(760px, calc(var(--app-vh) - 48px));
       display: flex;
       flex-direction: column;
       border: 1px solid var(--line-strong);
@@ -742,6 +749,14 @@
       display: none;
     }
 
+    .viewer.is-blurred,
+    .viewer.is-filter-open,
+    .viewer.is-modal-open,
+    body.modal-open .viewer,
+    body.modal-open .guide-wrap {
+      filter: none !important;
+    }
+
     @media (max-width: 900px) {
       .topbar {
         align-items: flex-start;
@@ -778,7 +793,7 @@
         left: 10px;
         right: 10px;
         width: auto;
-        max-height: calc(100vh - var(--mobile-menu-top) - 92px);
+        max-height: calc(var(--app-vh) - var(--mobile-menu-top) - 92px);
         overflow-y: auto;
         overscroll-behavior: contain;
       }
@@ -836,25 +851,75 @@
       }
 
       .modal-overlay {
-        padding: 12px;
         align-items: flex-end;
+        justify-content: center;
+        padding:
+          calc(12px + env(safe-area-inset-top))
+          10px
+          calc(var(--mobile-bottom-reserve) + env(safe-area-inset-bottom))
+          10px;
+        background: rgba(0, 0, 0, 0.62);
+        overscroll-behavior: contain;
       }
 
       .modal {
-        max-height: calc(100vh - 24px);
-        border-radius: 16px;
+        width: 100%;
+        max-height: calc(
+          var(--app-vh)
+          - var(--mobile-bottom-reserve)
+          - 24px
+          - env(safe-area-inset-top)
+          - env(safe-area-inset-bottom)
+        );
+        border-radius: 18px;
+        overflow: hidden;
       }
 
       .modal-header {
-        padding: 16px;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        align-items: center;
+        padding: 14px 16px;
+        background: rgba(7, 11, 16, 0.98);
       }
 
       .modal-title {
         font-size: 20px;
+        line-height: 1.2;
+      }
+
+      .modal-close {
+        min-width: 44px;
+        min-height: 44px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 14px;
       }
 
       .modal-body {
+        max-height: calc(
+          var(--app-vh)
+          - var(--mobile-bottom-reserve)
+          - 92px
+          - env(safe-area-inset-top)
+          - env(safe-area-inset-bottom)
+        );
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
         padding: 16px;
+      }
+
+      #filters-modal .modal {
+        max-height: calc(
+          var(--app-vh)
+          - var(--mobile-bottom-reserve)
+          - 24px
+          - env(safe-area-inset-bottom)
+        );
       }
 
       .mobile-bottombar {
@@ -927,6 +992,7 @@
           <option value="it">🇮🇹 Italiano</option>
           <option value="pl">🇵🇱 Polski</option>
           <option value="tr">🇹🇷 Türkçe</option>
+          <option value="isu">◈ Isu Script</option>
         </select>
       </label>
 
@@ -1163,7 +1229,7 @@
   <script>
     const BASE_WIDTH = 3000;
     const BASE_HEIGHT = 6466;
-    const STORAGE_KEY = 'ac-guide-optimized-viewer-v16';
+    const STORAGE_KEY = 'ac-guide-optimized-viewer-v17';
     const WELCOME_KEY = 'ac-guide-welcome-seen-v1';
 
     const BASE_BY_LANG = {
@@ -1178,7 +1244,8 @@
       ko: 'assets/layers/base-ko.png',
       it: 'assets/layers/base-it.png',
       pl: 'assets/layers/base-pl.png',
-      tr: 'assets/layers/base-tr.png'
+      tr: 'assets/layers/base-tr.png',
+      isu: 'assets/layers/base-isu.png'
     };
 
     const FILTERS = [
@@ -1696,6 +1763,11 @@
       switching: '언어 전환에 몇 초 정도 걸릴 수 있습니다. 잠시만 기다려 주세요...'
     };
 
+    UI.isu = {
+      ...UI.en,
+      subtitle: 'Isu Script edition'
+    };
+
     const topbar = document.querySelector('#topbar');
     const viewer = document.querySelector('#viewer');
     const guideWrap = document.querySelector('#guide-wrap');
@@ -1789,8 +1861,80 @@
       startZoom: 1
     };
 
+    let activeModal = null;
+    let modalHistoryActive = false;
+    let suppressNextModalPop = false;
+
+    function setModalOpenState() {
+      document.body.classList.toggle('modal-open', Boolean(activeModal));
+      updateViewportVars();
+    }
+
+    function showModal(modal) {
+      if (!modal) return;
+
+      if (activeModal && activeModal !== modal) {
+        activeModal.classList.add('hidden');
+      }
+
+      activeModal = modal;
+      modal.classList.remove('hidden');
+      setModalOpenState();
+
+      if (!modalHistoryActive) {
+        history.pushState({ acGuideModal: true }, '', window.location.href);
+        modalHistoryActive = true;
+      }
+    }
+
+    function hideModalOnly(modal) {
+      if (!modal) return;
+
+      modal.classList.add('hidden');
+
+      if (activeModal === modal) {
+        activeModal = null;
+      }
+
+      setModalOpenState();
+    }
+
+    function closeModal(modal, options = {}) {
+      if (!modal || modal.classList.contains('hidden')) return;
+
+      hideModalOnly(modal);
+
+      if (options.updateHistory !== false && modalHistoryActive) {
+        suppressNextModalPop = true;
+        history.back();
+      }
+    }
+
+    function closeActiveModalFromHistory() {
+      if (!activeModal) {
+        modalHistoryActive = false;
+        setModalOpenState();
+        return;
+      }
+
+      if (activeModal === welcomeModal) {
+        localStorage.setItem(WELCOME_KEY, '1');
+      }
+
+      activeModal.classList.add('hidden');
+      activeModal = null;
+      modalHistoryActive = false;
+      setModalOpenState();
+    }
+
     function isMobileLayout() {
       return window.matchMedia('(max-width: 900px)').matches;
+    }
+
+    function updateViewportVars() {
+      const viewport = window.visualViewport;
+      const height = viewport ? viewport.height : window.innerHeight;
+      document.documentElement.style.setProperty('--app-vh', `${height}px`);
     }
 
     function updateMobileMenuPosition() {
@@ -1809,7 +1953,7 @@
     }
 
     function getMaxZoom() {
-      return isMobileLayout() ? 4 : 6;
+      return isMobileLayout() ? 5 : 6;
     }
 
     function getGuideWidth() {
@@ -1982,11 +2126,11 @@
 
     function openHowModal() {
       renderHowModal();
-      howModal.classList.remove('hidden');
+      showModal(howModal);
     }
 
     function closeHowModal() {
-      howModal.classList.add('hidden');
+      closeModal(howModal);
     }
 
     function renderWelcomeModal() {
@@ -2008,15 +2152,15 @@
 
     function openWelcomeModal() {
       renderWelcomeModal();
-      welcomeModal.classList.remove('hidden');
+      showModal(welcomeModal);
     }
 
-    function closeWelcomeModal(markSeen = true) {
-      welcomeModal.classList.add('hidden');
-
+    function closeWelcomeModal(markSeen = true, options = {}) {
       if (markSeen) {
         localStorage.setItem(WELCOME_KEY, '1');
       }
+
+      closeModal(welcomeModal, options);
     }
 
     function maybeShowWelcome() {
@@ -2041,19 +2185,19 @@
 
     function openAboutModal() {
       renderAboutModal();
-      aboutModal.classList.remove('hidden');
+      showModal(aboutModal);
     }
 
     function closeAboutModal() {
-      aboutModal.classList.add('hidden');
+      closeModal(aboutModal);
     }
 
     function openFiltersModal() {
-      filtersModal.classList.remove('hidden');
+      showModal(filtersModal);
     }
 
     function closeFiltersModal() {
-      filtersModal.classList.add('hidden');
+      closeModal(filtersModal);
     }
 
     function applyHintVisibility(shouldSave = true) {
@@ -2113,7 +2257,7 @@
 
       const previousLang = state.lang;
       state.lang = lang;
-      document.documentElement.lang = lang;
+      document.documentElement.lang = lang === 'isu' ? 'en' : lang;
       languageSelect.value = lang;
 
       const dictionary = UI[lang] || UI.en;
@@ -2529,7 +2673,8 @@
     welcomeCloseXButton.addEventListener('click', () => closeWelcomeModal(true));
 
     welcomeHowButton.addEventListener('click', () => {
-      closeWelcomeModal(true);
+      localStorage.setItem(WELCOME_KEY, '1');
+      hideModalOnly(welcomeModal);
       openHowModal();
     });
 
@@ -2568,10 +2713,15 @@
       const tag = document.activeElement.tagName.toLowerCase();
 
       if (event.key === 'Escape') {
-        if (!howModal.classList.contains('hidden')) closeHowModal();
-        if (!filtersModal.classList.contains('hidden')) closeFiltersModal();
-        if (!welcomeModal.classList.contains('hidden')) closeWelcomeModal(true);
-        if (!aboutModal.classList.contains('hidden')) closeAboutModal();
+        if (activeModal) {
+          if (activeModal === welcomeModal) {
+            closeWelcomeModal(true);
+          } else {
+            closeModal(activeModal);
+          }
+          return;
+        }
+
         if (viewMenu.open) viewMenu.open = false;
         return;
       }
@@ -2617,6 +2767,7 @@
     });
 
     window.addEventListener('resize', () => {
+      updateViewportVars();
       const oldWidth = guideWrap.offsetWidth;
       const oldHeight = guideWrap.offsetHeight;
 
@@ -2646,6 +2797,39 @@
       });
     });
 
+
+    window.addEventListener('popstate', () => {
+      if (suppressNextModalPop) {
+        suppressNextModalPop = false;
+        modalHistoryActive = false;
+        return;
+      }
+
+      if (activeModal) {
+        closeActiveModalFromHistory();
+      }
+    });
+
+    window.addEventListener('orientationchange', () => {
+      requestAnimationFrame(() => {
+        updateViewportVars();
+        updateMobileMenuPosition();
+        applyZoom();
+      });
+    });
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', () => {
+        updateViewportVars();
+        updateMobileMenuPosition();
+      });
+
+      window.visualViewport.addEventListener('scroll', () => {
+        updateViewportVars();
+        updateMobileMenuPosition();
+      });
+    }
+
     const savedApplied = readSavedState();
     const urlApplied = readUrlState();
 
@@ -2653,6 +2837,7 @@
       state.lang = detectPreferredLanguage();
     }
 
+    updateViewportVars();
     computeBaseGuideWidth();
     applyZoom();
     updateMobileMenuPosition();
