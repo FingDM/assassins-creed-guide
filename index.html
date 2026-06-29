@@ -1229,7 +1229,7 @@
   <script>
     const BASE_WIDTH = 3000;
     const BASE_HEIGHT = 6466;
-    const STORAGE_KEY = 'ac-guide-optimized-viewer-v17';
+    const STORAGE_KEY = 'ac-guide-optimized-viewer-v18';
     const WELCOME_KEY = 'ac-guide-welcome-seen-v1';
 
     const BASE_BY_LANG = {
@@ -1763,6 +1763,434 @@
       switching: '언어 전환에 몇 초 정도 걸릴 수 있습니다. 잠시만 기다려 주세요...'
     };
 
+    const LOCALIZED_DIALOGS = 
+{
+      "zh-CN": {
+            "welcome": {
+                  "title": "欢迎来到刺客信条宇宙指南",
+                  "close": "明白了",
+                  "openHow": "打开“如何开始？”",
+                  "paragraphs": [
+                        "这是一份关于刺客信条宇宙的交互式分层指南。它把主系列游戏、衍生作品、书籍、漫画、视频材料和未来项目整合在同一个视觉结构中。",
+                        "红色条目代表主系列游戏。它们始终显示，不能关闭。彩色按钮用于控制额外图层：衍生作品、书籍、非虚构资料、漫画、视频材料和未来项目。",
+                        "你可以在顶部面板切换语言。在桌面端，“视图”菜单可用于缩放、适配屏幕和切换导航模式。在手机端，主要操作位于底部：“关于项目”、“如何开始？”和“筛选”。",
+                        "如果这份指南一开始显得过于庞大，可以先点击“如何开始？”。那里会介绍几种探索方式：完整体验、现代入门路线，或按自己喜欢的历史时代选择作品。",
+                        "要隐藏这条欢迎信息，请点击“明白了”或 × 按钮。之后它不会再在此设备上自动出现。"
+                  ]
+            },
+            "how": {
+                  "title": "来一次信仰之跃…",
+                  "items": [
+                        {
+                              "title": "完整沉浸。",
+                              "text": "如果你是新玩家，并且想体验整个主系列，就沿着信息图中的红色条目前进。如果还想了解更多，可以加入衍生作品和视频材料。如果想完全沉入刺客信条的世界，也可以继续阅读相关书籍和漫画。"
+                        },
+                        {
+                              "title": "新鲜血液。",
+                              "text": "如果你想进入这个系列，但不想从 2007 年的第一部开始，可以跳过“黄金时代”，从软重启作品 Assassin’s Creed Origins 入手。有些设定可能会暂时不太清楚，但需要时可以再补充查询。"
+                        },
+                        {
+                              "title": "穿越各个时代。",
+                              "text": "如果你不关心现代线、伊甸碎片或更深层的世界观，也可以直接选择任意红色条目的作品。喜欢海盗？Assassin’s Creed Black Flag 就很适合。喜欢维多利亚时期的伦敦？那就进入 Assassin’s Creed Syndicate。通关后如果喜欢，再继续阅读相关漫画或书籍。"
+                        }
+                  ]
+            },
+            "about": {
+                  "title": "关于项目",
+                  "paragraphs": [
+                        "Assassin’s Creed | RU 是一个专注于刺客信条这一标志性系列的主要项目，面向俄罗斯及独联体地区。我们的项目自 2011 年起持续运营，帮助老玩家和新玩家保持对这一品牌的兴趣。",
+                        "多年来，我们的门户与 Ubisoft 保持了长期关系，并通过多项官方活动积极支持刺客信条社区。我们也曾参与 Ubisoft 过去的 Star Players 和 Mentors Guild 项目，这让我们能够更深入地参与社区生活，并代表忠实粉丝的兴趣。",
+                        "除了支持 Ubisoft 之外，我们也有幸与 20th Century Fox 和 Tornado Energy 等公司合作。",
+                        "我们还参与系列游戏的相关工作，并参与刺客信条文学作品的俄语翻译。",
+                        "本指南仅供信息参考。",
+                        "Assassin’s Creed 是 Ubisoft 的商标。"
+                  ]
+            }
+      },
+      "es": {
+            "welcome": {
+                  "title": "Bienvenido a la guía del universo de Assassin’s Creed",
+                  "close": "Entendido",
+                  "openHow": "Abrir “¿Cómo empezar?”",
+                  "paragraphs": [
+                        "Esta es una guía interactiva por capas del universo de Assassin’s Creed. Reúne la serie principal, los spin-offs, los libros, los cómics, los materiales de vídeo y los próximos proyectos en una sola estructura visual.",
+                        "Las fichas rojas son la serie principal de juegos. Siempre están visibles y no se pueden desactivar. Los botones de colores controlan capas adicionales: spin-offs, libros, no ficción, cómics, vídeos y futuros proyectos.",
+                        "Usa el selector de idioma en el panel superior para cambiar la localización. En escritorio, el menú Vista controla el zoom, el ajuste a pantalla y los modos de navegación. En móvil, las acciones principales están abajo: Acerca de, ¿Cómo empezar? y Filtros.",
+                        "Si la guía parece demasiado grande al principio, empieza con el botón “¿Cómo empezar?”. Allí se explican varias rutas: inmersión completa, un punto de entrada moderno o elegir por una época histórica concreta.",
+                        "Para ocultar este mensaje de bienvenida, pulsa “Entendido” o el botón ×. No volverá a aparecer automáticamente en este dispositivo."
+                  ]
+            },
+            "how": {
+                  "title": "Dando un salto de fe…",
+                  "items": [
+                        {
+                              "title": "Inmersión completa.",
+                              "text": "Si eres nuevo en la franquicia y quieres vivir toda la serie principal, sigue simplemente las fichas rojas de la infografía. Si quieres más, añade spin-offs y materiales de vídeo. Y si quieres sumergirte del todo en el mundo de Assassin’s Creed, explora también los libros y los cómics."
+                        },
+                        {
+                              "title": "Sangre nueva.",
+                              "text": "Si quieres entrar en la serie pero no te apetece volver a 2007, puedes saltarte la “era dorada” de la franquicia y empezar por el reinicio suave, Assassin’s Creed Origins. Puede que algunos fragmentos del lore no queden claros, pero siempre puedes consultarlos cuando lo necesites."
+                        },
+                        {
+                              "title": "Un viaje por las eras.",
+                              "text": "Si no te interesa la historia del presente, los Fragmentos del Edén o el lore más profundo, puedes iniciar cualquier proyecto de las fichas rojas. ¿Te gustan los piratas? Assassin’s Creed Black Flag te espera. ¿Prefieres el Londres victoriano? Bienvenido a Assassin’s Creed Syndicate. Si terminas un juego y te gusta, continúa con sus cómics o libros relacionados."
+                        }
+                  ]
+            },
+            "about": {
+                  "title": "Acerca del proyecto",
+                  "paragraphs": [
+                        "Assassin’s Creed | RU es un proyecto líder dedicado a la icónica franquicia Assassin’s Creed en Rusia y los países de la CEI. Nuestro proyecto está activo desde 2011 y ayuda a mantener el interés por la marca tanto entre fans veteranos como entre nuevos jugadores.",
+                        "A lo largo de los años, nuestro portal ha mantenido una relación duradera con Ubisoft y ha apoyado activamente a la comunidad de Assassin’s Creed mediante diversas iniciativas oficiales. También participamos en los antiguos programas Star Players y Mentors Guild de Ubisoft, lo que nos permitió contribuir más de cerca a la comunidad y representar los intereses de los fans más dedicados.",
+                        "Además de apoyar a Ubisoft, también tuvimos la oportunidad de colaborar con compañías como 20th Century Fox y Tornado Energy.",
+                        "También participamos en el desarrollo de juegos de la serie y en la traducción de literatura de Assassin’s Creed al ruso.",
+                        "Esta guía se ha creado únicamente con fines informativos.",
+                        "Assassin’s Creed es una marca comercial de Ubisoft."
+                  ]
+            }
+      },
+      "fr": {
+            "welcome": {
+                  "title": "Bienvenue dans le guide de l’univers Assassin’s Creed",
+                  "close": "Compris",
+                  "openHow": "Ouvrir « Comment commencer ? »",
+                  "paragraphs": [
+                        "Ce guide interactif à couches présente l’univers Assassin’s Creed. Il rassemble la série principale, les jeux dérivés, les livres, les BD, les vidéos et les projets à venir dans une seule structure visuelle.",
+                        "Les tuiles rouges représentent la série principale de jeux. Elles restent toujours visibles et ne peuvent pas être désactivées. Les boutons colorés contrôlent les couches supplémentaires : jeux dérivés, livres, ouvrages documentaires, BD, vidéos et projets futurs.",
+                        "Utilisez le sélecteur de langue dans le panneau supérieur pour changer de localisation. Sur ordinateur, le menu Affichage gère le zoom, l’ajustement à l’écran et les modes de navigation. Sur mobile, les actions principales se trouvent en bas : À propos, Comment commencer ? et Filtres.",
+                        "Si le guide semble trop vaste au départ, commencez par le bouton « Comment commencer ? ». Il présente plusieurs façons d’explorer la série : immersion complète, point d’entrée moderne ou choix selon une période historique.",
+                        "Pour masquer ce message de bienvenue, appuyez sur « Compris » ou sur le bouton ×. Il ne s’affichera plus automatiquement sur cet appareil."
+                  ]
+            },
+            "how": {
+                  "title": "Faire un saut de la foi…",
+                  "items": [
+                        {
+                              "title": "Immersion complète.",
+                              "text": "Si vous découvrez la franchise et souhaitez parcourir toute la série principale, suivez simplement les tuiles rouges de l’infographie. Pour aller plus loin, ajoutez les jeux dérivés et les vidéos. Pour plonger entièrement dans l’univers d’Assassin’s Creed, explorez aussi les livres et les BD."
+                        },
+                        {
+                              "title": "Sang neuf.",
+                              "text": "Si vous voulez entrer dans la série sans revenir à 2007, vous pouvez ignorer « l’âge d’or » de la franchise et commencer par le soft reboot, Assassin’s Creed Origins. Certains éléments de lore pourront sembler obscurs, mais vous pourrez toujours les rechercher au besoin."
+                        },
+                        {
+                              "title": "Un voyage à travers les époques.",
+                              "text": "Si la trame moderne, les Fragments d’Éden ou le lore profond ne vous intéressent pas, lancez simplement n’importe quel projet des tuiles rouges. Vous aimez les pirates ? Assassin’s Creed Black Flag vous attend. Vous préférez le Londres victorien ? Bienvenue dans Assassin’s Creed Syndicate. Si un jeu vous plaît une fois terminé, poursuivez avec ses BD ou livres associés."
+                        }
+                  ]
+            },
+            "about": {
+                  "title": "À propos du projet",
+                  "paragraphs": [
+                        "Assassin’s Creed | RU est un projet de référence consacré à la franchise culte Assassin’s Creed en Russie et dans les pays de la CEI. Notre projet existe depuis 2011 et contribue à maintenir l’intérêt pour la marque auprès des fans de longue date comme des nouveaux joueurs.",
+                        "Au fil des années, notre portail a entretenu une relation durable avec Ubisoft et a soutenu activement la communauté Assassin’s Creed au travers de diverses initiatives officielles. Nous avons également participé aux anciens programmes Star Players et Mentors Guild d’Ubisoft, ce qui nous a permis de contribuer plus étroitement à la communauté et de représenter les intérêts des fans les plus investis.",
+                        "En plus de soutenir Ubisoft, nous avons aussi eu l’occasion de collaborer avec des sociétés comme 20th Century Fox et Tornado Energy.",
+                        "Nous participons également au développement de jeux de la série et à la traduction en russe de la littérature Assassin’s Creed.",
+                        "Ce guide est réalisé uniquement à des fins d’information.",
+                        "Assassin’s Creed est une marque commerciale d’Ubisoft."
+                  ]
+            }
+      },
+      "pt-BR": {
+            "welcome": {
+                  "title": "Bem-vindo ao guia do universo Assassin’s Creed",
+                  "close": "Entendi",
+                  "openHow": "Abrir “Como começar?”",
+                  "paragraphs": [
+                        "Este é um guia interativo em camadas do universo Assassin’s Creed. Ele reúne a série principal, spin-offs, livros, quadrinhos, materiais em vídeo e projetos futuros em uma única estrutura visual.",
+                        "As peças vermelhas representam a série principal de jogos. Elas ficam sempre visíveis e não podem ser desativadas. Os botões coloridos controlam camadas adicionais: spin-offs, livros, não ficção, quadrinhos, vídeos e projetos futuros.",
+                        "Use o seletor de idioma no painel superior para mudar a localização. No desktop, o menu Visualização controla zoom, ajuste à tela e modos de navegação. No celular, as ações principais ficam na barra inferior: Sobre, Como começar? e Filtros.",
+                        "Se o guia parecer grande demais no início, comece pelo botão “Como começar?”. Ele explica diferentes formas de explorar a série: experiência completa, ponto de entrada moderno ou escolha por uma época histórica específica.",
+                        "Para ocultar esta mensagem de boas-vindas, toque em “Entendi” ou no botão ×. Ela não aparecerá novamente automaticamente neste dispositivo."
+                  ]
+            },
+            "how": {
+                  "title": "Dando um salto de fé…",
+                  "items": [
+                        {
+                              "title": "Imersão completa.",
+                              "text": "Se você é novo na franquia e quer conhecer toda a série principal, basta seguir as peças vermelhas no infográfico. Se quiser mais, adicione spin-offs e materiais em vídeo. Para mergulhar de vez no mundo de Assassin’s Creed, explore também os livros e quadrinhos."
+                        },
+                        {
+                              "title": "Sangue novo.",
+                              "text": "Se você quer entrar na série mas não tem vontade de voltar a 2007, pode pular a “era de ouro” da franquia e começar pelo soft reboot, Assassin’s Creed Origins. Alguns elementos do lore podem parecer confusos, mas você sempre pode pesquisá-los quando precisar."
+                        },
+                        {
+                              "title": "Uma viagem pelas eras.",
+                              "text": "Se você não se interessa pela narrativa dos tempos modernos, pelos Pedaços do Éden ou pelo lore mais profundo, pode jogar qualquer projeto das peças vermelhas. Curte piratas? Assassin’s Creed Black Flag está à sua espera. Gosta da Londres vitoriana? Bem-vindo a Assassin’s Creed Syndicate. Terminou um jogo e gostou? Então siga para os quadrinhos ou livros relacionados."
+                        }
+                  ]
+            },
+            "about": {
+                  "title": "Sobre o projeto",
+                  "paragraphs": [
+                        "Assassin’s Creed | RU é um projeto de referência dedicado à icônica franquia Assassin’s Creed na Rússia e nos países da CEI. Nosso projeto está ativo desde 2011, ajudando a manter o interesse pela marca entre fãs antigos e novos jogadores.",
+                        "Ao longo dos anos, nosso portal manteve uma relação de longa data com a Ubisoft e apoiou ativamente a comunidade Assassin’s Creed por meio de várias iniciativas oficiais. Também participamos dos antigos programas Star Players e Mentors Guild da Ubisoft, o que nos permitiu contribuir mais de perto com a comunidade e representar os interesses dos fãs dedicados.",
+                        "Além de apoiar a Ubisoft, também tivemos a oportunidade de colaborar com empresas como 20th Century Fox e Tornado Energy.",
+                        "Também participamos do desenvolvimento de jogos da série e da tradução de literatura de Assassin’s Creed para o russo.",
+                        "Este guia foi criado apenas para fins informativos.",
+                        "Assassin’s Creed é uma marca comercial da Ubisoft."
+                  ]
+            }
+      },
+      "de": {
+            "welcome": {
+                  "title": "Willkommen im Guide zum Assassin’s-Creed-Universum",
+                  "close": "Verstanden",
+                  "openHow": "„Wie anfangen?“ öffnen",
+                  "paragraphs": [
+                        "Dies ist ein interaktiver, mehrschichtiger Guide zum Assassin’s-Creed-Universum. Er vereint die Hauptspielreihe, Spin-offs, Bücher, Comics, Videomaterial und kommende Projekte in einer visuellen Struktur.",
+                        "Die roten Kacheln zeigen die Hauptspielreihe. Sie sind immer sichtbar und können nicht deaktiviert werden. Die farbigen Schaltflächen steuern zusätzliche Ebenen: Spin-offs, Bücher, Sachbücher, Comics, Videos und kommende Projekte.",
+                        "Mit der Sprachauswahl oben wechselst du die Lokalisierung. Auf dem Desktop bietet das Menü Ansicht Zoom, Bildschirmanpassung und Navigationsmodi. Auf Mobilgeräten liegen die wichtigsten Aktionen unten: Über, Wie anfangen? und Filter.",
+                        "Wenn der Guide zunächst überwältigend wirkt, beginne mit „Wie anfangen?“. Dort findest du mehrere Wege durch die Serie: vollständiges Eintauchen, einen modernen Einstieg oder die Wahl nach einer bestimmten historischen Epoche.",
+                        "Um diese Willkommensmeldung auszublenden, drücke „Verstanden“ oder die ×-Schaltfläche. Sie erscheint auf diesem Gerät nicht erneut automatisch."
+                  ]
+            },
+            "how": {
+                  "title": "Ein Sprung des Glaubens…",
+                  "items": [
+                        {
+                              "title": "Vollständiges Eintauchen.",
+                              "text": "Wenn du neu in der Franchise bist und die gesamte Hauptreihe erleben möchtest, folge einfach den roten Kacheln in der Infografik. Wenn du mehr willst, ergänze Spin-offs und Videomaterial. Wenn du ganz in die Welt von Assassin’s Creed eintauchen möchtest, erkunde auch die Bücher und Comics."
+                        },
+                        {
+                              "title": "Frisches Blut.",
+                              "text": "Wenn du in die Serie einsteigen willst, aber nicht bis 2007 zurückgehen möchtest, kannst du die „goldene Ära“ überspringen und mit dem Soft-Reboot Assassin’s Creed Origins beginnen. Manche Lore-Details können unklar wirken, lassen sich bei Bedarf aber jederzeit nachschlagen."
+                        },
+                        {
+                              "title": "Eine Reise durch die Epochen.",
+                              "text": "Wenn dich die Gegenwartsstory, die Edensplitter oder tiefere Lore nicht interessieren, starte einfach ein beliebiges Projekt aus den roten Kacheln. Du magst Piraten? Assassin’s Creed Black Flag wartet auf dich. Du magst das viktorianische London? Willkommen bei Assassin’s Creed Syndicate. Hat dir ein Spiel gefallen, kannst du mit den zugehörigen Comics oder Büchern weitermachen."
+                        }
+                  ]
+            },
+            "about": {
+                  "title": "Über das Projekt",
+                  "paragraphs": [
+                        "Assassin’s Creed | RU ist ein führendes Projekt zur ikonischen Assassin’s-Creed-Franchise in Russland und den GUS-Staaten. Unser Projekt besteht seit 2011 und hilft, das Interesse an der Marke bei langjährigen Fans ebenso wie bei neuen Spielern aufrechtzuerhalten.",
+                        "Über die Jahre hat unser Portal eine langfristige Beziehung zu Ubisoft aufgebaut und die Assassin’s-Creed-Community durch verschiedene offizielle Initiativen aktiv unterstützt. Wir waren außerdem Teilnehmer der ehemaligen Ubisoft-Programme Star Players und Mentors Guild, wodurch wir näher zur Community beitragen und die Interessen engagierter Fans vertreten konnten.",
+                        "Neben der Unterstützung von Ubisoft hatten wir auch die Gelegenheit, mit Unternehmen wie 20th Century Fox und Tornado Energy zusammenzuarbeiten.",
+                        "Wir beteiligen uns außerdem an der Entwicklung von Spielen der Reihe und an der Übersetzung von Assassin’s-Creed-Literatur ins Russische.",
+                        "Dieser Guide dient ausschließlich Informationszwecken.",
+                        "Assassin’s Creed ist eine Marke von Ubisoft."
+                  ]
+            }
+      },
+      "it": {
+            "welcome": {
+                  "title": "Benvenuto nella guida all’universo di Assassin’s Creed",
+                  "close": "Capito",
+                  "openHow": "Apri “Da dove iniziare?”",
+                  "paragraphs": [
+                        "Questa è una guida interattiva a livelli dell’universo di Assassin’s Creed. Riunisce la serie principale, gli spin-off, i libri, i fumetti, i materiali video e i progetti futuri in un’unica struttura visiva.",
+                        "I riquadri rossi indicano la serie principale di giochi. Sono sempre visibili e non possono essere disattivati. I pulsanti colorati controllano i livelli aggiuntivi: spin-off, libri, saggistica, fumetti, video e progetti futuri.",
+                        "Usa il selettore della lingua nel pannello superiore per cambiare localizzazione. Su desktop il menu Vista gestisce zoom, adattamento allo schermo e modalità di navigazione. Su mobile le azioni principali sono in basso: Info, Da dove iniziare? e Filtri.",
+                        "Se la guida sembra troppo ampia all’inizio, parti dal pulsante “Da dove iniziare?”. Lì trovi diversi percorsi: esperienza completa, punto d’ingresso moderno o scelta in base a un’epoca storica specifica.",
+                        "Per nascondere questo messaggio di benvenuto, premi “Capito” o il pulsante ×. Non comparirà più automaticamente su questo dispositivo."
+                  ]
+            },
+            "how": {
+                  "title": "Un salto della fede…",
+                  "items": [
+                        {
+                              "title": "Immersione completa.",
+                              "text": "Se sei nuovo nella franchise e vuoi vivere tutta la serie principale, segui semplicemente i riquadri rossi dell’infografica. Se vuoi di più, aggiungi spin-off e materiali video. Per immergerti davvero nel mondo di Assassin’s Creed, esplora anche libri e fumetti."
+                        },
+                        {
+                              "title": "Sangue nuovo.",
+                              "text": "Se vuoi entrare nella serie ma non hai voglia di tornare al 2007, puoi saltare “l’epoca d’oro” della franchise e iniziare dal soft reboot, Assassin’s Creed Origins. Alcuni elementi del lore potrebbero risultare poco chiari, ma puoi sempre recuperarli quando serve."
+                        },
+                        {
+                              "title": "Un viaggio tra le epoche.",
+                              "text": "Se non ti interessa la trama moderna, i Frutti dell’Eden o il lore più profondo, puoi avviare qualsiasi progetto tra i riquadri rossi. Ami i pirati? Assassin’s Creed Black Flag ti aspetta. Ti piace la Londra vittoriana? Benvenuto in Assassin’s Creed Syndicate. Se completi un gioco e ti piace, passa poi ai fumetti o ai libri collegati."
+                        }
+                  ]
+            },
+            "about": {
+                  "title": "Informazioni sul progetto",
+                  "paragraphs": [
+                        "Assassin’s Creed | RU è un progetto di riferimento dedicato all’iconica franchise Assassin’s Creed in Russia e nei paesi della CSI. Il nostro progetto è attivo dal 2011 e contribuisce a mantenere vivo l’interesse per il brand tra i fan di lunga data e i nuovi giocatori.",
+                        "Nel corso degli anni, il nostro portale ha mantenuto un rapporto duraturo con Ubisoft e ha sostenuto attivamente la community di Assassin’s Creed attraverso diverse iniziative ufficiali. Abbiamo anche partecipato agli ex programmi Star Players e Mentors Guild di Ubisoft, che ci hanno permesso di contribuire più da vicino alla community e rappresentare gli interessi dei fan più appassionati.",
+                        "Oltre a sostenere Ubisoft, abbiamo avuto anche l’opportunità di collaborare con aziende come 20th Century Fox e Tornado Energy.",
+                        "Partecipiamo inoltre allo sviluppo dei giochi della serie e alla traduzione in russo della letteratura di Assassin’s Creed.",
+                        "Questa guida è realizzata esclusivamente a scopo informativo.",
+                        "Assassin’s Creed è un marchio commerciale di Ubisoft."
+                  ]
+            }
+      },
+      "pl": {
+            "welcome": {
+                  "title": "Witamy w przewodniku po uniwersum Assassin’s Creed",
+                  "close": "Rozumiem",
+                  "openHow": "Otwórz „Jak zacząć?”",
+                  "paragraphs": [
+                        "To interaktywny, warstwowy przewodnik po uniwersum Assassin’s Creed. Łączy główną serię gier, spin-offy, książki, komiksy, materiały wideo i przyszłe projekty w jednej strukturze wizualnej.",
+                        "Czerwone kafelki oznaczają główną serię gier. Są zawsze widoczne i nie można ich wyłączyć. Kolorowe przyciski sterują dodatkowymi warstwami: spin-offami, książkami, literaturą faktu, komiksami, wideo i przyszłymi projektami.",
+                        "W górnym panelu możesz zmienić język. Na komputerze menu Widok odpowiada za zoom, dopasowanie przewodnika do ekranu i tryby nawigacji. Na telefonie główne akcje znajdują się na dole: O projekcie, Jak zacząć? i Filtry.",
+                        "Jeśli przewodnik na początku wydaje się zbyt rozbudowany, zacznij od przycisku „Jak zacząć?”. Opisuje on kilka ścieżek: pełne zanurzenie, nowoczesny punkt startu albo wybór według ulubionej epoki historycznej.",
+                        "Aby ukryć tę wiadomość powitalną, naciśnij „Rozumiem” albo przycisk ×. Nie pojawi się ponownie automatycznie na tym urządzeniu."
+                  ]
+            },
+            "how": {
+                  "title": "Czas na skok wiary…",
+                  "items": [
+                        {
+                              "title": "Pełne zanurzenie.",
+                              "text": "Jeśli dopiero zaczynasz przygodę z franczyzą i chcesz poznać całą główną serię, po prostu podążaj za czerwonymi kafelkami na infografice. Jeśli chcesz więcej, dodaj spin-offy i materiały wideo. A jeśli chcesz wejść w świat Assassin’s Creed w pełni, sięgnij też po książki i komiksy."
+                        },
+                        {
+                              "title": "Świeża krew.",
+                              "text": "Jeśli chcesz wejść w serię, ale nie masz ochoty wracać do 2007 roku, możesz pominąć „złotą erę” franczyzy i zacząć od miękkiego rebootu, Assassin’s Creed Origins. Niektóre fragmenty lore mogą być niejasne, ale zawsze możesz je sprawdzić w razie potrzeby."
+                        },
+                        {
+                              "title": "Podróż przez epoki.",
+                              "text": "Jeśli nie interesuje cię wątek współczesny, Fragmenty Edenu ani głębsze lore, śmiało wybierz dowolny projekt z czerwonych kafelków. Lubisz piratów? Assassin’s Creed Black Flag czeka. Wolisz wiktoriański Londyn? Witaj w Assassin’s Creed Syndicate. Jeśli gra ci się spodoba, przejdź potem do powiązanych komiksów albo książek."
+                        }
+                  ]
+            },
+            "about": {
+                  "title": "O projekcie",
+                  "paragraphs": [
+                        "Assassin’s Creed | RU to jeden z wiodących projektów poświęconych kultowej franczyzie Assassin’s Creed w Rosji i krajach WNP. Projekt działa od 2011 roku i pomaga podtrzymywać zainteresowanie marką zarówno wśród wieloletnich fanów, jak i nowych graczy.",
+                        "Przez lata nasz portal utrzymywał długotrwałe relacje z Ubisoftem i aktywnie wspierał społeczność Assassin’s Creed poprzez różne oficjalne inicjatywy. Byliśmy także uczestnikami dawnych programów Ubisoft Star Players i Mentors Guild, co pozwalało nam bliżej współtworzyć życie społeczności i reprezentować interesy oddanych fanów.",
+                        "Oprócz wspierania Ubisoftu mieliśmy również okazję współpracować z takimi firmami jak 20th Century Fox i Tornado Energy.",
+                        "Bierzemy także udział w pracach nad grami z serii oraz w tłumaczeniu literatury Assassin’s Creed na język rosyjski.",
+                        "Ten przewodnik powstał wyłącznie w celach informacyjnych.",
+                        "Assassin’s Creed jest znakiem towarowym Ubisoftu."
+                  ]
+            }
+      },
+      "tr": {
+            "welcome": {
+                  "title": "Assassin’s Creed evren rehberine hoş geldin",
+                  "close": "Anladım",
+                  "openHow": "“Nasıl başlanır?”ı aç",
+                  "paragraphs": [
+                        "Bu, Assassin’s Creed evreni için etkileşimli ve katmanlı bir rehberdir. Ana oyun serisini, yan oyunları, kitapları, çizgi romanları, video içeriklerini ve gelecek projeleri tek bir görsel yapıda bir araya getirir.",
+                        "Kırmızı kutular ana oyun serisini gösterir. Her zaman görünürler ve kapatılamazlar. Renkli düğmeler ek katmanları kontrol eder: yan oyunlar, kitaplar, kurgu dışı içerikler, çizgi romanlar, videolar ve gelecek projeler.",
+                        "Üst paneldeki dil seçiciyi kullanarak yerelleştirmeyi değiştirebilirsin. Masaüstünde Görünüm menüsü yakınlaştırma, ekrana sığdırma ve gezinme modlarını kontrol eder. Mobilde ana eylemler alttadır: Hakkında, Nasıl başlanır? ve Filtreler.",
+                        "Rehber ilk bakışta çok büyük görünürse “Nasıl başlanır?” düğmesiyle başla. Orada seriyi keşfetmenin birkaç yolu anlatılır: tam deneyim, modern başlangıç noktası veya belirli bir tarihsel döneme göre seçim.",
+                        "Bu karşılama mesajını gizlemek için “Anladım”a ya da × düğmesine bas. Bu cihazda otomatik olarak tekrar görünmeyecektir."
+                  ]
+            },
+            "how": {
+                  "title": "Bir inanç sıçrayışı…",
+                  "items": [
+                        {
+                              "title": "Tam dalış.",
+                              "text": "Seriye yeni başlıyorsan ve ana oyunların tamamını deneyimlemek istiyorsan infografikteki kırmızı kutuları takip et. Daha fazlasını istersen yan oyunları ve video içeriklerini ekle. Assassin’s Creed dünyasına tamamen dalmak istiyorsan kitapları ve çizgi romanları da keşfet."
+                        },
+                        {
+                              "title": "Taze kan.",
+                              "text": "Seriye girmek istiyor ama 2007’ye dönmek istemiyorsan, serinin “altın çağını” atlayıp yumuşak yeniden başlangıç olan Assassin’s Creed Origins ile başlayabilirsin. Bazı lore parçaları belirsiz gelebilir, ama gerektiğinde her zaman araştırabilirsin."
+                        },
+                        {
+                              "title": "Çağlar arasında yolculuk.",
+                              "text": "Modern zaman hikâyesi, Cennet Parçaları veya daha derin lore ilgini çekmiyorsa kırmızı kutulardaki herhangi bir projeyi başlatabilirsin. Korsanları mı seviyorsun? Assassin’s Creed Black Flag hazır. Viktorya dönemi Londra’sını mı seviyorsun? Assassin’s Creed Syndicate’e hoş geldin. Bir oyunu bitirip beğenirsen ilgili çizgi romanlara veya kitaplara geçebilirsin."
+                        }
+                  ]
+            },
+            "about": {
+                  "title": "Proje hakkında",
+                  "paragraphs": [
+                        "Assassin’s Creed | RU, Rusya ve BDT ülkelerinde ikonik Assassin’s Creed serisine adanmış önde gelen bir projedir. Projemiz 2011’den beri aktiftir ve markaya olan ilgiyi hem uzun süreli hayranlar hem de yeni oyuncular arasında canlı tutmaya yardımcı olur.",
+                        "Yıllar içinde portalımız Ubisoft ile uzun süreli bir ilişki sürdürmüş ve Assassin’s Creed topluluğunu çeşitli resmi girişimler aracılığıyla aktif biçimde desteklemiştir. Ayrıca Ubisoft’un eski Star Players ve Mentors Guild programlarına katıldık; bu da topluluğa daha yakından katkı sunmamızı ve sadık hayranların çıkarlarını temsil etmemizi sağladı.",
+                        "Ubisoft’u desteklemenin yanı sıra 20th Century Fox ve Tornado Energy gibi şirketlerle de çalışma fırsatı bulduk.",
+                        "Serideki oyunların geliştirilmesine ve Assassin’s Creed edebiyatının Rusçaya çevrilmesine de katkı sağlıyoruz.",
+                        "Bu rehber yalnızca bilgilendirme amacıyla hazırlanmıştır.",
+                        "Assassin’s Creed, Ubisoft’un ticari markasıdır."
+                  ]
+            }
+      },
+      "ja": {
+            "welcome": {
+                  "title": "Assassin’s Creed ユニバースガイドへようこそ",
+                  "close": "了解",
+                  "openHow": "「始め方」を開く",
+                  "paragraphs": [
+                        "これは Assassin’s Creed ユニバースを扱う、レイヤー式のインタラクティブガイドです。メインシリーズ、スピンオフ、書籍、コミック、映像資料、今後の作品をひとつの視覚的な構造にまとめています。",
+                        "赤いタイルはメインゲームシリーズです。常に表示され、オフにはできません。色付きのボタンで、スピンオフ、書籍、ノンフィクション、コミック、映像、今後の作品といった追加レイヤーを切り替えられます。",
+                        "上部パネルの言語セレクターでローカライズを切り替えられます。PC では「表示」メニューからズーム、画面へのフィット、ナビゲーションモードを操作できます。モバイルでは主な操作が下部にあり、「プロジェクトについて」「始め方」「フィルター」を使います。",
+                        "ガイドが大きすぎて分かりにくい場合は、まず「始め方」を開いてください。シリーズを体験するいくつかの方法、すべてを追うルート、現代的な入口、好きな歴史時代から選ぶルートを説明しています。",
+                        "このウェルカムメッセージを閉じるには、「了解」または × ボタンを押してください。この端末では自動的には再表示されません。"
+                  ]
+            },
+            "how": {
+                  "title": "信仰の跳躍を…",
+                  "items": [
+                        {
+                              "title": "完全な没入。",
+                              "text": "シリーズが初めてで、メインゲームを一通り体験したい場合は、インフォグラフィック内の赤いタイルを順に追ってください。さらに深く知りたい場合は、スピンオフや映像資料を加えましょう。Assassin’s Creed の世界に完全に浸りたいなら、書籍やコミックも探索してください。"
+                        },
+                        {
+                              "title": "新しい血。",
+                              "text": "シリーズに入りたいけれど 2007 年まで戻りたくない場合は、フランチャイズの「黄金時代」を飛ばして、ソフトリブート作品 Assassin’s Creed Origins から始めることもできます。一部のロアは分かりにくいかもしれませんが、必要なときに調べれば大丈夫です。"
+                        },
+                        {
+                              "title": "時代をめぐる旅。",
+                              "text": "現代編、エデンのかけら、深いロアに興味がない場合は、赤いタイルのどの作品から始めても問題ありません。海賊が好きなら Assassin’s Creed Black Flag、ヴィクトリア朝ロンドンが好きなら Assassin’s Creed Syndicate へ。ゲームをクリアして気に入ったら、関連するコミックや書籍へ進みましょう。"
+                        }
+                  ]
+            },
+            "about": {
+                  "title": "プロジェクトについて",
+                  "paragraphs": [
+                        "Assassin’s Creed | RU は、ロシアおよび CIS 諸国で象徴的な Assassin’s Creed フランチャイズに特化した主要プロジェクトです。私たちのプロジェクトは 2011 年から活動しており、長年のファンと新規プレイヤーの双方に向けてブランドへの関心を維持する手助けをしています。",
+                        "長年にわたり、私たちのポータルは Ubisoft と継続的な関係を築き、さまざまな公式イニシアチブを通じて Assassin’s Creed コミュニティを積極的に支援してきました。また、Ubisoft の旧 Star Players および Mentors Guild プログラムにも参加しており、コミュニティにより近い形で貢献し、熱心なファンの関心を代表することができました。",
+                        "Ubisoft の支援に加えて、20th Century Fox や Tornado Energy などの企業と協力する機会にも恵まれました。",
+                        "また、シリーズ作品の開発や Assassin’s Creed 関連文学のロシア語翻訳にも参加しています。",
+                        "このガイドは情報提供のみを目的として作成されています。",
+                        "Assassin’s Creed は Ubisoft の商標です。"
+                  ]
+            }
+      },
+      "ko": {
+            "welcome": {
+                  "title": "Assassin’s Creed 세계관 가이드에 오신 것을 환영합니다",
+                  "close": "확인",
+                  "openHow": "“어떻게 시작?” 열기",
+                  "paragraphs": [
+                        "이 가이드는 Assassin’s Creed 세계관을 위한 인터랙티브 레이어형 가이드입니다. 메인 게임 시리즈, 스핀오프, 도서, 코믹스, 영상 자료와 예정작을 하나의 시각적 구조로 모았습니다.",
+                        "빨간 타일은 메인 게임 시리즈입니다. 항상 표시되며 끌 수 없습니다. 색상 버튼은 추가 레이어를 조절합니다: 스핀오프, 도서, 논픽션 자료, 코믹스, 영상, 예정작.",
+                        "상단 패널의 언어 선택기에서 로컬라이즈를 바꿀 수 있습니다. 데스크톱에서는 보기 메뉴로 확대/축소, 화면 맞춤, 내비게이션 모드를 조절합니다. 모바일에서는 하단 버튼을 사용합니다: 프로젝트 소개, 어떻게 시작?, 필터.",
+                        "가이드가 처음에 너무 방대하게 느껴진다면 “어떻게 시작?” 버튼부터 눌러 보세요. 전체 체험, 현대적인 시작점, 특정 역사 시대를 기준으로 선택하는 방식 등 여러 경로를 설명합니다.",
+                        "이 환영 메시지를 숨기려면 “확인” 또는 × 버튼을 누르세요. 이 기기에서는 자동으로 다시 표시되지 않습니다."
+                  ]
+            },
+            "how": {
+                  "title": "신뢰의 도약을…",
+                  "items": [
+                        {
+                              "title": "완전한 몰입.",
+                              "text": "프랜차이즈가 처음이고 메인 게임 시리즈 전체를 경험하고 싶다면 인포그래픽의 빨간 타일을 따라가면 됩니다. 더 깊이 알고 싶다면 스핀오프와 영상 자료를 추가하세요. Assassin’s Creed 세계에 완전히 빠져들고 싶다면 도서와 코믹스도 함께 살펴보세요."
+                        },
+                        {
+                              "title": "새로운 피.",
+                              "text": "시리즈에 입문하고 싶지만 2007년으로 돌아가고 싶지 않다면, 프랜차이즈의 “황금기”를 건너뛰고 소프트 리부트인 Assassin’s Creed Origins부터 시작할 수 있습니다. 일부 로어는 처음에 불분명할 수 있지만 필요할 때 찾아보면 됩니다."
+                        },
+                        {
+                              "title": "시대를 넘는 여행.",
+                              "text": "현대 파트, 에덴의 조각, 더 깊은 로어에 관심이 없다면 빨간 타일의 어떤 작품이든 바로 시작해도 됩니다. 해적이 좋다면 Assassin’s Creed Black Flag, 빅토리아 시대 런던이 좋다면 Assassin’s Creed Syndicate가 있습니다. 게임을 끝내고 마음에 들었다면 관련 코믹스나 도서로 이어가세요."
+                        }
+                  ]
+            },
+            "about": {
+                  "title": "프로젝트 소개",
+                  "paragraphs": [
+                        "Assassin’s Creed | RU는 러시아와 CIS 국가에서 상징적인 Assassin’s Creed 프랜차이즈에 전념하는 주요 프로젝트입니다. 이 프로젝트는 2011년부터 활동해 왔으며, 오랜 팬과 신규 플레이어 모두가 브랜드에 대한 관심을 유지하도록 돕고 있습니다.",
+                        "수년 동안 저희 포털은 Ubisoft와 장기적인 관계를 유지해 왔고, 다양한 공식 이니셔티브를 통해 Assassin’s Creed 커뮤니티를 적극적으로 지원했습니다. 또한 Ubisoft의 이전 Star Players 및 Mentors Guild 프로그램에도 참여하여 커뮤니티에 더 가까이 기여하고 헌신적인 팬들의 관심을 대표할 수 있었습니다.",
+                        "Ubisoft를 지원하는 것 외에도 20th Century Fox와 Tornado Energy 같은 회사들과 협력할 기회도 있었습니다.",
+                        "저희는 시리즈 게임 개발과 Assassin’s Creed 문학 작품의 러시아어 번역에도 참여하고 있습니다.",
+                        "이 가이드는 정보 제공 목적으로만 제작되었습니다.",
+                        "Assassin’s Creed는 Ubisoft의 상표입니다."
+                  ]
+            }
+      }
+}
+;
+
+    Object.entries(LOCALIZED_DIALOGS).forEach(([lang, dialogs]) => {
+      UI[lang] = { ...(UI[lang] || UI.en), ...dialogs };
+    });
     UI.isu = {
       ...UI.en,
       subtitle: 'Isu Script edition'
